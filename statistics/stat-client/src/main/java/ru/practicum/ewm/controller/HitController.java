@@ -24,9 +24,8 @@ public class HitController {
     public ResponseEntity<Object> getStats(@RequestParam @NotNull String start,
                                            @RequestParam @NotNull String end,
                                            @RequestParam(required = false) String uris,
-                                           @RequestParam(defaultValue = "false") boolean uniqueIp) {
-        ResponseEntity<Object> re = hitClient.getStats(start, end, uris, uniqueIp);
-        return re;
+                                           @RequestParam(defaultValue = "false") boolean unique) {
+        return hitClient.getStats(start, end, uris, unique);
     }
 
 

@@ -30,17 +30,17 @@ public class HitClient extends BaseClient {
     public ResponseEntity<Object> getStats(String start,
                                            String end,
                                            String uris,
-                                           boolean uniqueIp) {
+                                           boolean unique) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("start", start);
         parameters.put("end", end);
-        parameters.put("uniqueIp", uniqueIp);
+        parameters.put("unique", unique);
 
         if (uris != null) {
             parameters.put("uris", uris);
-            return get("/stats?start={start}&end={end}&uris={uris}&uniqueIp={uniqueIp}", parameters);
+            return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
         } else {
-            return get("/stats?start={start}&end={end}&uniqueIp={uniqueIp}", parameters);
+            return get("/stats?start={start}&end={end}&unique={unique}", parameters);
         }
     }
 

@@ -45,6 +45,7 @@ public class HitServiceImpl implements HitService {
 
         for (String uri : allUris) {
             if (uniqueIp) {
+                List<Hit> allHits = hitRepository.findAll();
                 hits = hitRepository.countHitsWithUriAndUniqueIps(dateTimeStart, dateTimeEnd, uri);
             } else {
                 hits = hitRepository.countHitsWithUriAndNoUniqueIps(dateTimeStart, dateTimeEnd, uri);

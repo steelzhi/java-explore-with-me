@@ -24,8 +24,8 @@ public class HitController {
     public List<Stats> getStats(@RequestParam @NotNull String start,
                                 @RequestParam @NotNull String end,
                                 @RequestParam(required = false) String uris,
-                                @RequestParam(defaultValue = "false") boolean uniqueIp) {
-        return hitService.getStats(start, end, uris, uniqueIp);
+                                @RequestParam Boolean unique) {
+        return hitService.getStats(start, end, uris, unique);
     }
 
 
