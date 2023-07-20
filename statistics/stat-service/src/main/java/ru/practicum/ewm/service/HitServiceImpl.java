@@ -58,6 +58,7 @@ public class HitServiceImpl implements HitService {
 
     @Override
     public Hit saveHit(Hit hit) {
+        //hit.setTimestamp(LocalDateTime.now());
         Hit savedHit = hitRepository.save(hit);
         return savedHit;
     }
