@@ -2,8 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<modules>
-	</modules>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -16,13 +14,26 @@
 
 	<groupId>ru.practicum</groupId>
 	<artifactId>explore-with-me</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<modules>
+		<module>main-service</module>
+		<module>statistics</module>
+	</modules>
 
 	<properties>
 		<java.version>11</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<pluginManagement>

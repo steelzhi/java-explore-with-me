@@ -1,10 +1,10 @@
-package controller;
+package ru.practicum.ewm.controller;
 
-import dto.Stats;
+import ru.practicum.ewm.dto.Stats;
 import lombok.RequiredArgsConstructor;
-import model.Hit;
+import ru.practicum.ewm.model.Hit;
 import org.springframework.web.bind.annotation.*;
-import service.HitService;
+import ru.practicum.ewm.service.HitService;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -21,10 +21,12 @@ public class HitController {
     }
 
     @GetMapping("/stats")
-    public List<Stats> getStats(@RequestParam @NotNull LocalDateTime start,
-                                @RequestParam @NotNull LocalDateTime end,
-                                @RequestParam String[] uris,
+    public List<Stats> getStats(@RequestParam @NotNull String start,
+                                @RequestParam @NotNull String end,
+                                @RequestParam(required = false) String uris,
                                 @RequestParam(defaultValue = "false") boolean uniqueIp) {
         return hitService.getStats(start, end, uris, uniqueIp);
     }
+
+
 }

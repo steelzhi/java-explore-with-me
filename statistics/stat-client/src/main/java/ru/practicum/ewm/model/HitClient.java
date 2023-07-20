@@ -1,8 +1,5 @@
-package hit;
+package ru.practicum.ewm.model;
 
-import client.BaseClient;
-
-import model.Hit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.ewm.client.BaseClient;
+import ru.practicum.ewm.model.Hit;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -28,17 +27,21 @@ public class HitClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getStats(LocalDateTime start,
-                                           LocalDateTime end,
-                                           String[] uris,
+    public ResponseEntity<Object> getStats(String start,
+                                           String end,
+                                           String uris,
                                            boolean uniqueIp) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("start", start);
         parameters.put("end", end);
-        parameters.put("uris", uris);
         parameters.put("uniqueIp", uniqueIp);
 
-        return get("/stats?start={start}&end={end}&uris={uris}&uniqueIp={uniqueIp}", parameters);
+        if (uris != null) {
+            parameters.put("uris", uris);
+            return get("/stats?start={start}&end={end}&uris={uris}&uniqueIp={uniqueIp}", parameters);
+        } else {
+            return get("/stats?start={start}&end={end}&uniqueIp={uniqueIp}", parameters);
+        }
     }
 
     public ResponseEntity<Object> postHit(Hit hit) {

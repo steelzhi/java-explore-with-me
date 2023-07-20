@@ -13,6 +13,12 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
+    <modules>
+        <module>stat-client</module>
+        <module>stat-dto</module>
+        <module>stat-service</module>
+    </modules>
+
     <build>
         <plugins>
             <plugin>
