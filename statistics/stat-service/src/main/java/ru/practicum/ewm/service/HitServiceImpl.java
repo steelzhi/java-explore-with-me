@@ -37,7 +37,7 @@ public class HitServiceImpl implements HitService {
                 allUris.add(hit.getUri());
             }
         } else {
-            String[] urisArray = uris.split(" ");
+            String[] urisArray = uris.split(",");
             for (String uri : urisArray) {
                 allUris.add(uri);
             }
@@ -53,6 +53,14 @@ public class HitServiceImpl implements HitService {
             String app = getAppByUri(uri);
             stats.add(new Stats(app, uri, hits));
         }
+
+        stats.sort((stats1, stats2) -> {
+            if (stats1.getHits() < stats2.getHits()) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
 
         return stats;
     }
