@@ -22,7 +22,7 @@ public class HitController {
     public List<Stats> getStats(@RequestParam String start,
                                 @RequestParam String end,
                                 @RequestParam(required = false) String uris,
-                                @RequestParam Boolean unique) {
+                                @RequestParam(defaultValue = "false") boolean unique) {
         return hitService.getStats(start, end, uris, unique);
     }
 
