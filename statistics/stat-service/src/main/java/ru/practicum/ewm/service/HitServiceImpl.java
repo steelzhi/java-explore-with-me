@@ -21,7 +21,7 @@ public class HitServiceImpl implements HitService {
             String start,
             String end,
             String uris,
-            boolean uniqueIp) {
+            boolean unique) {
         List<Stats> stats = new ArrayList<>();
         int hits;
 
@@ -44,7 +44,7 @@ public class HitServiceImpl implements HitService {
         }
 
         for (String uri : allUris) {
-            if (uniqueIp) {
+            if (unique) {
                 hits = hitRepository.countHitsWithUriAndUniqueIps(dateTimeStart, dateTimeEnd, uri);
             } else {
                 hits = hitRepository.countHitsWithUriAndNoUniqueIps(dateTimeStart, dateTimeEnd, uri);
