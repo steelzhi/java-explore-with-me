@@ -1,9 +1,9 @@
 package ru.practicum.ewm.service;
 
-import ru.practicum.ewm.dto.Stats;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.ewm.model.Hit;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.dto.Stats;
+import ru.practicum.ewm.model.Hit;
 import ru.practicum.ewm.repository.HitRepository;
 
 import java.time.LocalDateTime;
@@ -45,7 +45,6 @@ public class HitServiceImpl implements HitService {
 
         for (String uri : allUris) {
             if (uniqueIp) {
-                List<Hit> allHits = hitRepository.findAll();
                 hits = hitRepository.countHitsWithUriAndUniqueIps(dateTimeStart, dateTimeEnd, uri);
             } else {
                 hits = hitRepository.countHitsWithUriAndNoUniqueIps(dateTimeStart, dateTimeEnd, uri);
@@ -67,7 +66,6 @@ public class HitServiceImpl implements HitService {
 
     @Override
     public Hit saveHit(Hit hit) {
-        //hit.setTimestamp(LocalDateTime.now());
         Hit savedHit = hitRepository.save(hit);
         return savedHit;
     }

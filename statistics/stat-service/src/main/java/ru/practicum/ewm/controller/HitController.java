@@ -1,13 +1,11 @@
 package ru.practicum.ewm.controller;
 
-import ru.practicum.ewm.dto.Stats;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.ewm.model.Hit;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.dto.Stats;
+import ru.practicum.ewm.model.Hit;
 import ru.practicum.ewm.service.HitService;
 
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,8 +19,8 @@ public class HitController {
     }
 
     @GetMapping("/stats")
-    public List<Stats> getStats(@RequestParam @NotNull String start,
-                                @RequestParam @NotNull String end,
+    public List<Stats> getStats(@RequestParam String start,
+                                @RequestParam String end,
                                 @RequestParam(required = false) String uris,
                                 @RequestParam Boolean unique) {
         return hitService.getStats(start, end, uris, unique);

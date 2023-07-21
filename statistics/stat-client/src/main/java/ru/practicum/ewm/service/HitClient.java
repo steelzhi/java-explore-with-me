@@ -1,4 +1,4 @@
-package ru.practicum.ewm.model;
+package ru.practicum.ewm.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,7 +10,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.client.BaseClient;
 import ru.practicum.ewm.model.Hit;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
