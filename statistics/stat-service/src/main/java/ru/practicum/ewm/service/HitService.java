@@ -6,7 +6,7 @@ import ru.practicum.ewm.model.Hit;
 import java.util.List;
 
 public interface HitService {
-    List<Stats> getStats(String start, String end, String uris, boolean uniqueIp);
+    List<Stats> getStats(String start, String end, String[] uris, boolean uniqueIp);
 
     Hit saveHit(Hit hit);
 }

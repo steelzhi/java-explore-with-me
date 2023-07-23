@@ -21,10 +21,8 @@ public class HitController {
     @GetMapping("/stats")
     public List<Stats> getStats(@RequestParam String start,
                                 @RequestParam String end,
-                                @RequestParam(required = false) String uris,
+                                @RequestParam(required = false) String[] uris,
                                 @RequestParam(defaultValue = "false") boolean unique) {
         return hitService.getStats(start, end, uris, unique);
     }
-
-
 }

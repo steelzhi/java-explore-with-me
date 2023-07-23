@@ -9,6 +9,7 @@ import ru.practicum.ewm.repository.HitRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,10 +21,9 @@ public class HitServiceImpl implements HitService {
     public List<Stats> getStats(
             String start,
             String end,
-            String uris,
+            String[] uris,
             boolean unique) {
-        List<Stats> stats = new ArrayList<>();
-        int hits;
+        List<Stats> stats;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTimeStart = LocalDateTime.parse(start, formatter);
@@ -37,20 +37,13 @@ public class HitServiceImpl implements HitService {
                 allUris.add(hit.getUri());
             }
         } else {
-            String[] urisArray = uris.split(",");
-            for (String uri : urisArray) {
-                allUris.add(uri);
-            }
+            allUris = Arrays.asList(uris);
         }
 
-        for (String uri : allUris) {
-            if (unique) {
-                hits = hitRepository.countHitsWithUriAndUniqueIps(dateTimeStart, dateTimeEnd, uri);
-            } else {
-                hits = hitRepository.countHitsWithUriAndNoUniqueIps(dateTimeStart, dateTimeEnd, uri);
-            }
-            String app = getAppByUri(uri);
-            stats.add(new Stats(app, uri, hits));
+        if (unique) {
+            stats = hitRepository.getStatsWithUniqueIps(dateTimeStart, dateTimeEnd, allUris);
+        } else {
+            stats = hitRepository.getStatsWithNoUniqueIps(dateTimeStart, dateTimeEnd, allUris);
         }
 
         stats.sort((stats1, stats2) -> {
@@ -68,9 +61,5 @@ public class HitServiceImpl implements HitService {
     public Hit saveHit(Hit hit) {
         Hit savedHit = hitRepository.save(hit);
         return savedHit;
-    }
-
-    private String getAppByUri(String uri) {
-        return hitRepository.getAppByUri(uri);
     }
 }
