@@ -4,15 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.User;
 
-import java.util.List;
-
-public interface UserRepository extends JpaRepository<User, Long> {
-    @Query("SELECT u " +
-            "FROM User AS u")
-    Page<User> getAllUsers(Pageable page);
-
-    Page<User> getAllUsersByIdIn(Long[] ids, Pageable page);
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 }

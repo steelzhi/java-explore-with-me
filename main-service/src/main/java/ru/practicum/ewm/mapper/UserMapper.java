@@ -17,8 +17,8 @@ public class UserMapper {
         if (user != null) {
             userDto = new UserDto(
                     user.getId(),
-                    user.getName(),
-                    user.getEmail()
+                    user.getEmail(),
+                    user.getName()
             );
         }
         return userDto;
@@ -50,8 +50,8 @@ public class UserMapper {
         if (userDto != null) {
             user = new User(
                     userDto.getId(),
-                    userDto.getName(),
-                    userDto.getEmail()
+                    userDto.getEmail(),
+                    userDto.getName()
             );
         }
         return user;

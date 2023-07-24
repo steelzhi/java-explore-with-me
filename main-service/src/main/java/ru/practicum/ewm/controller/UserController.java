@@ -1,9 +1,11 @@
 package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.service.UserService;
+import ru.practicum.ewm.util.ParamChecker;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -15,7 +17,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto postUser(@RequestBody @NotNull UserDto userDto) {
+        ParamChecker.checkIfUserParamsAreNotCorrect(userDto);
         return userService.postUser(userDto);
     }
 
@@ -26,8 +30,9 @@ public class UserController {
         return userService.getUsers(ids, from, size);
     }
 
-    @DeleteMapping
-    public void deleteUser(@RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 }

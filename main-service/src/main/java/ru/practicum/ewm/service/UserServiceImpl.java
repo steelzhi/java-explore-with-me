@@ -11,7 +11,6 @@ import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.UserRepository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -30,15 +29,14 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers(Long[] ids, Integer from, Integer size) {
         List<User> users = new ArrayList<>();
 
-        if (ids != null) {
-            users = userRepository.getAllUsersByUser_IdIn(ids);
-        } else {
-            users = userRepository.findAll();
-        }
-
         if (from != null && size != null) {
             PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
-            Page<User> pagedList = userRepository.getAllUsers(page);
+            Page<User> pagedList;
+            if (ids != null) {
+                pagedList = userRepository.getAllUsersByIdIn(ids, page);
+            } else {
+                pagedList = userRepository.getAllUsers(page);
+            }
             if (pagedList != null) {
                 users = pagedList.getContent();
             }

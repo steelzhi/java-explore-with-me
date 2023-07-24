@@ -40,4 +40,27 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleIncorrectCategoryRequest(final IncorrectCategoryRequestException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "У добавляемого пользователя заданы некорректные данные",
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler()
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleCategoryNotFound(final CategoryNotFoundException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "The required object was not found.",
+                HttpStatus.NOT_FOUND,
+                LocalDateTime.now());
+    }
+
+
+
+
 }
