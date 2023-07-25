@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.service.UserService;
-import ru.practicum.ewm.util.ParamChecker;
+import ru.practicum.ewm.util.ControllerParamChecker;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -19,7 +19,7 @@ public class UserController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto postUser(@RequestBody @NotNull UserDto userDto) {
-        ParamChecker.checkIfUserParamsAreNotCorrect(userDto);
+        ControllerParamChecker.checkIfUserParamsAreNotCorrect(userDto);
         return userService.postUser(userDto);
     }
 

@@ -27,6 +27,17 @@ public class CategoryMapper {
         return category;
     }
 
+    public static Category mapToCategory(Long catId, CategoryDto categoryDto) {
+        Category category = null;
+        if (categoryDto != null) {
+            category = new Category(
+                    catId,
+                    categoryDto.getName()
+            );
+        }
+
+        return category;
+    }
 
     public static CategoryDto mapToCategoryDto(Category category) {
         CategoryDto categoryDto = null;
@@ -37,5 +48,15 @@ public class CategoryMapper {
             );
         }
         return categoryDto;
+    }
+
+    public static List<CategoryDto> mapToCategoryDto(List<Category> categories) {
+        List<CategoryDto> categoryDtos = new ArrayList<>();
+        if (categories != null) {
+            for (Category category : categories) {
+                categoryDtos.add(mapToCategoryDto(category));
+            }
+        }
+        return categoryDtos;
     }
 }

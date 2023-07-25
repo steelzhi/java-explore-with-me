@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler()
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleIncorrectUserRequest(final IncorrectUserRequestException e) {
         return new ApiError(e.getStackTrace(),
@@ -20,7 +20,7 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler()
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleViolationUserRestrictions(final ViolationUserRestrictionsException e) {
         return new ApiError(e.getStackTrace(),
@@ -30,7 +30,7 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler()
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleUserNotFound(final UserNotFoundException e) {
         return new ApiError(e.getStackTrace(),
@@ -40,7 +40,7 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler()
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleIncorrectCategoryRequest(final IncorrectCategoryRequestException e) {
         return new ApiError(e.getStackTrace(),
@@ -50,7 +50,7 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
-    @ExceptionHandler()
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handleCategoryNotFound(final CategoryNotFoundException e) {
         return new ApiError(e.getStackTrace(),
@@ -60,7 +60,34 @@ public class ErrorHandler {
                 LocalDateTime.now());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDuplicateCategoryName(final DuplicateCategoryNameException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Категория с таким именем уже существует",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleIncorrectEventRequest(final IncorrectEventRequestException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Некорректная дата начала события",
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handlePatchRestriction(final PatchRestrictionException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Нельзя вносить изменения в уже опубликованные события",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
 
 }

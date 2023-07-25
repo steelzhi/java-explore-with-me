@@ -8,5 +8,9 @@ import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.User;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+    @Query("SELECT c " +
+            "FROM Category AS c")
+    Page<Category> getAllCategories(Pageable page);
 
+    Category findCategoryByName(String name);
 }

@@ -29,17 +29,15 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers(Long[] ids, Integer from, Integer size) {
         List<User> users = new ArrayList<>();
 
-        if (from != null && size != null) {
-            PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
-            Page<User> pagedList;
-            if (ids != null) {
-                pagedList = userRepository.getAllUsersByIdIn(ids, page);
-            } else {
-                pagedList = userRepository.getAllUsers(page);
-            }
-            if (pagedList != null) {
-                users = pagedList.getContent();
-            }
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
+        Page<User> pagedList;
+        if (ids != null) {
+            pagedList = userRepository.getAllUsersByIdIn(ids, page);
+        } else {
+            pagedList = userRepository.getAllUsers(page);
+        }
+        if (pagedList != null) {
+            users = pagedList.getContent();
         }
 
         List<UserDto> userDtos = UserMapper.mapToUserDto(users);
