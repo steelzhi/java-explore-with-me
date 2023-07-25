@@ -42,7 +42,7 @@ public class Event {
     private User initiator;
 
     @JoinColumn(name = "location_id")
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.ALL})
     private Location location;
     private boolean paid;
     private int participantLimit;

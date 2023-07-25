@@ -88,29 +88,35 @@ public class ControllerParamChecker {
     }
 
     public static void checkIfEventParamsAreNotCorrect(UpdateEventUserRequest updateEventUserRequest) {
-        if (updateEventUserRequest.getAnnotation().length() < 20 || updateEventUserRequest.getAnnotation().length() > 2000) {
+        if (updateEventUserRequest.getAnnotation() != null
+                && (updateEventUserRequest.getAnnotation().length() < 20 || updateEventUserRequest.getAnnotation().length() > 2000)) {
             throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
         }
 
-        if (updateEventUserRequest.getDescription().length() < 20 || updateEventUserRequest.getDescription().length() > 7000) {
+        if (updateEventUserRequest.getDescription() != null
+                && (updateEventUserRequest.getDescription().length() < 20 || updateEventUserRequest.getDescription().length() > 7000)) {
             throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
-        if (updateEventUserRequest.getTitle().length() < 3 || updateEventUserRequest.getTitle().length() > 120) {
+        if (updateEventUserRequest.getTitle() != null
+                && (updateEventUserRequest.getTitle().length() < 3 || updateEventUserRequest.getTitle().length() > 120)) {
             throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
     }
 
     public static void checkIfEventParamsAreNotCorrect(UpdateEventAdminRequest updateEventAdminRequest) {
-        if (updateEventAdminRequest.getAnnotation().length() < 20 || updateEventAdminRequest.getAnnotation().length() > 2000) {
+        if (updateEventAdminRequest.getAnnotation() != null
+                && (updateEventAdminRequest.getAnnotation().length() < 20 || updateEventAdminRequest.getAnnotation().length() > 2000)) {
             throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
         }
 
-        if (updateEventAdminRequest.getDescription().length() < 20 || updateEventAdminRequest.getDescription().length() > 7000) {
+        if (updateEventAdminRequest.getDescription() != null
+                && (updateEventAdminRequest.getDescription().length() < 20 || updateEventAdminRequest.getDescription().length() > 7000)) {
             throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
-        if (updateEventAdminRequest.getTitle().length() < 3 || updateEventAdminRequest.getTitle().length() > 120) {
+        if (updateEventAdminRequest.getTitle() != null
+                && (updateEventAdminRequest.getTitle().length() < 3 || updateEventAdminRequest.getTitle().length() > 120)) {
             throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
     }

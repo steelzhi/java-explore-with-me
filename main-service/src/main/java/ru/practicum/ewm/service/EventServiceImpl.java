@@ -92,15 +92,15 @@ public class EventServiceImpl implements EventService {
             event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         }
         event.setRequestModeration(updateEventUserRequest.isRequestModeration());
-        if (updateEventUserRequest.getStateAction() != null) {
-            event.setState(updateEventUserRequest.getStateAction());
-        }
+        event.setState(EventState.PENDING);
         if (updateEventUserRequest.getTitle() != null) {
             event.setTitle(updateEventUserRequest.getTitle());
         }
 
-        eventRepository.save(event);
-        return EventMapper.mapToEventFullDto(event);
+        Event savedEvent = eventRepository.save(event);
+        EventFullDto eventFullDto = EventMapper.mapToEventFullDto(savedEvent);
+        return eventFullDto;
+        //return EventMapper.mapToEventFullDto(event);
     }
 
     @Override
@@ -156,9 +156,7 @@ public class EventServiceImpl implements EventService {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
         event.setRequestModeration(updateEventAdminRequest.isRequestModeration());
-        if (updateEventAdminRequest.getStateAction() != null) {
-            event.setState(updateEventAdminRequest.getStateAction());
-        }
+        event.setState(EventState.PENDING);
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }

@@ -31,7 +31,7 @@ public class EventMapper {
                     newEventDto.getParticipantLimit(),
                     null,
                     newEventDto.isRequestModeration(),
-                    EventState.WAITING,
+                    EventState.SEND_TO_REVIEW,
                     newEventDto.getTitle()
             );
         }
@@ -51,6 +51,7 @@ public class EventMapper {
                     event.getId(),
                     UserMapper.mapToUserShortDto(event.getInitiator()),
                     event.getLocation(),
+                    event.isPaid(),
                     event.getParticipantLimit(),
                     null,
                     event.isRequestModeration(),
