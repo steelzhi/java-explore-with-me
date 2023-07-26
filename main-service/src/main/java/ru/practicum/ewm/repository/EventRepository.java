@@ -6,6 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.Event;
+import ru.practicum.ewm.state.EventState;
+
+import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.List;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> getAllEventsByInitiator_Id(long initiatorId, Pageable page);
@@ -19,6 +24,11 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND e.category.id IN ?3 " +
             "AND e.eventDate > ?4 " +
             "AND e.eventDate < ?5")
-    Page<Event> searchEvents(long[] users, String[] states, long[] categories, String rangeStart, String rangeEnd, Pageable page);
+    Page<Event> searchEvents(long[] users, EnumSet<EventState> enumSetOfStates, long[] categories, LocalDateTime rangeStart, LocalDateTime  rangeEnd, Pageable page);
+
+    @Query("SELECT e " +
+            "FROM Event AS e " +
+            "WHERE e.state IN ?1")
+    List<Event> searchEvents2(EnumSet<EventState> states);
 
 }

@@ -44,14 +44,14 @@ public class Event {
     @JoinColumn(name = "location_id")
     @ManyToOne(cascade = {CascadeType.ALL})
     private Location location;
-    private boolean paid;
-    private int participantLimit;
+    private Boolean paid;
+    private Integer participantLimit;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publishedOn;
-    private boolean requestModeration;
+    private Boolean requestModeration;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private EventState state;
     private String title;
 }

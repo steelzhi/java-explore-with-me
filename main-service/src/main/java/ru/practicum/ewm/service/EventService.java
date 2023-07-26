@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.state.EventState;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -19,7 +21,7 @@ public interface EventService {
 
     List<EventFullDto> searchEvents(
             long[] users,
-            String[] states,
+            EventState[] states,
             long[] categories,
             String rangeStart,
             String rangeEnd,

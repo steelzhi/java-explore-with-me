@@ -51,10 +51,10 @@ public class EventMapper {
                     event.getId(),
                     UserMapper.mapToUserShortDto(event.getInitiator()),
                     event.getLocation(),
-                    event.isPaid(),
+                    event.getPaid(),
                     event.getParticipantLimit(),
                     null,
-                    event.isRequestModeration(),
+                    event.getRequestModeration(),
                     event.getState(),
                     event.getTitle(),
                     0
@@ -73,7 +73,7 @@ public class EventMapper {
                     event.getEventDate(),
                     event.getId(),
                     UserMapper.mapToUserShortDto(event.getInitiator()),
-                    event.isPaid(),
+                    event.getPaid(),
                     event.getTitle(),
                     0
             );

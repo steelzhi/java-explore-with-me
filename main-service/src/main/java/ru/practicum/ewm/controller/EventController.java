@@ -5,8 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.service.EventService;
+import ru.practicum.ewm.state.EventState;
 import ru.practicum.ewm.util.ControllerParamChecker;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -64,7 +66,7 @@ public class EventController {
     @GetMapping("/admin/events")
     @ResponseStatus(HttpStatus.OK)
     public List<EventFullDto> searchEvents(@RequestParam(required = false) long[] users,
-                                           @RequestParam(required = false) String[] states,
+                                           @RequestParam(required = false) EventState[] states,
                                            @RequestParam(required = false) long[] categories,
                                            @RequestParam(required = false) String rangeStart,
                                            @RequestParam(required = false) String rangeEnd,

@@ -19,7 +19,9 @@ import ru.practicum.ewm.repository.UserRepository;
 import ru.practicum.ewm.state.EventState;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 @Service
@@ -87,26 +89,22 @@ public class EventServiceImpl implements EventService {
         if (updateEventUserRequest.getLocation() != null) {
             event.setLocation(updateEventUserRequest.getLocation());
         }
-        event.setPaid(updateEventUserRequest.isPaid());
-        if (updateEventUserRequest.getParticipantLimit() != event.getParticipantLimit()) {
+        if (updateEventUserRequest.getParticipantLimit() != event.getParticipantLimit()
+                && updateEventUserRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         }
-        event.setRequestModeration(updateEventUserRequest.isRequestModeration());
-        event.setState(EventState.PENDING);
         if (updateEventUserRequest.getTitle() != null) {
             event.setTitle(updateEventUserRequest.getTitle());
         }
 
         Event savedEvent = eventRepository.save(event);
-        EventFullDto eventFullDto = EventMapper.mapToEventFullDto(savedEvent);
-        return eventFullDto;
-        //return EventMapper.mapToEventFullDto(event);
+        return EventMapper.mapToEventFullDto(savedEvent);
     }
 
     @Override
     public List<EventFullDto> searchEvents(
             long[] users,
-            String[] states,
+            EventState[] states,
             long[] categories,
             String rangeStart,
             String rangeEnd,
@@ -115,14 +113,26 @@ public class EventServiceImpl implements EventService {
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
 
-        Page<Event> pagedList = eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, page);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime = LocalDateTime.parse(rangeStart, formatter);
+        LocalDateTime endTime = LocalDateTime.parse(rangeEnd, formatter);
+
+        EnumSet<EventState> enumSetOfStates = getEnumSetOfStates(states);
+
+        Page<Event> pagedList = eventRepository.searchEvents(users, enumSetOfStates, categories, startTime, endTime, page);
+
+        List<Event> list2 = eventRepository.searchEvents2(EnumSet.of(EventState.PUBLISH_EVENT)); //
+        List<Event> list3 = eventRepository.findAll();
 
         if (pagedList != null) {
             events = pagedList.getContent();
         }
 
+        List<EventFullDto> eventFullDtos = EventMapper.mapToEventFullDto(events); //
+
         return EventMapper.mapToEventFullDto(events);
     }
+
 
     @Override
     public EventFullDto patchEventByAdmin(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
@@ -151,12 +161,11 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getLocation() != null) {
             event.setLocation(updateEventAdminRequest.getLocation());
         }
-        event.setPaid(updateEventAdminRequest.isPaid());
-        if (updateEventAdminRequest.getParticipantLimit() != event.getParticipantLimit()) {
+        if (updateEventAdminRequest.getParticipantLimit() != event.getParticipantLimit()
+        && updateEventAdminRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
-        event.setRequestModeration(updateEventAdminRequest.isRequestModeration());
-        event.setState(EventState.PENDING);
+        //event.setState(EventState.PENDING);
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
@@ -189,5 +198,12 @@ public class EventServiceImpl implements EventService {
         if (eventDateTime.minusHours(1).isBefore(LocalDateTime.now())) {
             throw new IncorrectEventRequestException("Обновленное время начала события не можем быть меньше часа от времени публикации");
         }
+    }
+
+    private EnumSet<EventState> getEnumSetOfStates(EventState[] states) {
+        List<EventState> listOfStates = List.of(states);
+        EnumSet<EventState> enumSetOfStates = EnumSet.copyOf(listOfStates);
+        return enumSetOfStates;
+
     }
 }
