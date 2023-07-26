@@ -1,5 +1,6 @@
 package ru.practicum.ewm.service;
 
+import com.sun.jdi.event.EventSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +71,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto patchEventByUser(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
+        checkIfNewDateTimeIsNotAcceptable(updateEventUserRequest);
         Event event = eventRepository.getEventByInitiator_IdAndId(userId, eventId);
         checkIfEventExists(event);
         checkIfEventStateRestrictsToPatch(event.getState());
@@ -93,6 +96,8 @@ public class EventServiceImpl implements EventService {
                 && updateEventUserRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         }
+
+        event.setState(EventState.PENDING);
         if (updateEventUserRequest.getTitle() != null) {
             event.setTitle(updateEventUserRequest.getTitle());
         }
@@ -103,32 +108,51 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventFullDto> searchEvents(
-            long[] users,
-            EventState[] states,
-            long[] categories,
+            Long[] users,
+            EnumSet<EventState> states,
+            Long[] categories,
             String rangeStart,
             String rangeEnd,
             Integer from,
             Integer size) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime = null;
+        if (rangeStart != null) {
+            startTime = LocalDateTime.parse(rangeStart, formatter);
+        }
+        LocalDateTime endTime = null;
+        if (rangeStart != null) {
+            endTime = LocalDateTime.parse(rangeEnd, formatter);
+        }
+
+        checkIfSearchParamsAreNotCorrect(startTime, endTime, from, size);
+
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime startTime = LocalDateTime.parse(rangeStart, formatter);
-        LocalDateTime endTime = LocalDateTime.parse(rangeEnd, formatter);
-
-        EnumSet<EventState> enumSetOfStates = getEnumSetOfStates(states);
-
-        Page<Event> pagedList = eventRepository.searchEvents(users, enumSetOfStates, categories, startTime, endTime, page);
-
-        List<Event> list2 = eventRepository.searchEvents2(EnumSet.of(EventState.PUBLISH_EVENT)); //
-        List<Event> list3 = eventRepository.findAll();
+        if (users == null) {
+            List<User> allUsers = userRepository.findAll();
+            List<Long> allUsersIds = allUsers.stream()
+                    .map(user -> user.getId())
+                    .collect(Collectors.toList());
+            users = new Long[allUsersIds.size()];
+            allUsersIds.toArray(users);
+        }
+        if (states == null) {
+            states = EnumSet.allOf(EventState.class);
+        }
+        if (categories == null) {
+            List<Category> allCategories = categoryRepository.findAll();
+            List<Long> allCategoriesIds = allCategories.stream()
+                    .map(category -> category.getId())
+                    .collect(Collectors.toList());
+            categories = new Long[allCategoriesIds.size()];
+            allCategoriesIds.toArray(categories);
+        }
+        Page<Event> pagedList = eventRepository.searchEvents(users, states, categories, startTime, endTime, page);
 
         if (pagedList != null) {
             events = pagedList.getContent();
         }
-
-        List<EventFullDto> eventFullDtos = EventMapper.mapToEventFullDto(events); //
 
         return EventMapper.mapToEventFullDto(events);
     }
@@ -162,16 +186,44 @@ public class EventServiceImpl implements EventService {
             event.setLocation(updateEventAdminRequest.getLocation());
         }
         if (updateEventAdminRequest.getParticipantLimit() != event.getParticipantLimit()
-        && updateEventAdminRequest.getParticipantLimit() != 0) {
+                && updateEventAdminRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
-        //event.setState(EventState.PENDING);
+
+/*        if (updateEventAdminRequest.getStateAction() != null) {
+            event.setState(updateEventAdminRequest.getStateAction());
+        } else {
+            EventState currentState = event.getState();
+            switch (currentState) {
+                case SEND_TO_REVIEW:
+                    event.setState(EventState.PUBLISHED);
+                    break;
+                case PUBLISH_EVENT:
+                    event.setState(EventState.CANCELED);
+                    break;
+            }
+        }*/
+
+        if (updateEventAdminRequest.getStateAction() != null) {
+            switch (updateEventAdminRequest.getStateAction()) {
+                case SEND_TO_REVIEW:
+                    event.setState(EventState.PENDING);
+                    break;
+                case REJECT_EVENT:
+                    event.setState(EventState.CANCELED);
+                    break;
+                case PUBLISH_EVENT:
+                    event.setState(EventState.PUBLISHED);
+            }
+        }
+
+        //event.setState(EventState.CANCELED);
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
 
-        eventRepository.save(event);
-        return EventMapper.mapToEventFullDto(event);
+        Event savedEvent = eventRepository.save(event);
+        return EventMapper.mapToEventFullDto(savedEvent);
     }
 
     private Category getCategoryById(long catId) {
@@ -200,10 +252,24 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private EnumSet<EventState> getEnumSetOfStates(EventState[] states) {
-        List<EventState> listOfStates = List.of(states);
-        EnumSet<EventState> enumSetOfStates = EnumSet.copyOf(listOfStates);
-        return enumSetOfStates;
-
+    private void checkIfSearchParamsAreNotCorrect(LocalDateTime startTime,
+                                                  LocalDateTime endTime,
+                                                  Integer from,
+                                                  Integer size) {
+        if ((startTime != null && endTime != null && endTime.isBefore(startTime))
+        || from < 0
+        || size < 0) {
+            throw new IncorrectEventRequestException("В поисковом запросе заданы некорректные параметры");
+        }
     }
+
+    private void checkIfNewDateTimeIsNotAcceptable(UpdateEventUserRequest updateEventUserRequest) {
+        if (updateEventUserRequest.getEventDate() != null
+                && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new IncorrectEventRequestException(
+                    "Дата начала события не может быть раньше, чем через 2 часа от настоящего момента");
+        }
+    }
+
+
 }

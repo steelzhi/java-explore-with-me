@@ -22,9 +22,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "WHERE e.initiator.id IN ?1 " +
             "AND e.state IN ?2 " +
             "AND e.category.id IN ?3 " +
-            "AND e.eventDate > ?4 " +
-            "AND e.eventDate < ?5")
-    Page<Event> searchEvents(long[] users, EnumSet<EventState> enumSetOfStates, long[] categories, LocalDateTime rangeStart, LocalDateTime  rangeEnd, Pageable page);
+            "AND e.eventDate >= COALESCE(?4, e.eventDate) " +
+            "AND e.eventDate <= COALESCE(?5, e.eventDate)")
+    Page<Event> searchEvents(Long[] users, EnumSet<EventState> enumSetOfStates, Long[] categories, LocalDateTime rangeStart, LocalDateTime rangeEnd, Pageable page);
 
     @Query("SELECT e " +
             "FROM Event AS e " +

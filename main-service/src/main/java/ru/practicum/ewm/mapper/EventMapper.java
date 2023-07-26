@@ -18,6 +18,27 @@ public class EventMapper {
     public static Event mapToEvent(NewEventDto newEventDto, Category category, User user) {
         Event event = null;
         if (newEventDto != null) {
+            Boolean isPaid;
+            if (newEventDto.getPaid() == null) {
+                isPaid = false;
+            } else {
+                isPaid = true;
+            }
+
+            Integer participantLimit;
+            if (newEventDto.getParticipantLimit() == null) {
+                participantLimit = 0;
+            } else {
+                participantLimit = newEventDto.getParticipantLimit();
+            }
+
+            Boolean requestModeration;
+            if (newEventDto.getRequestModeration() == null) {
+                requestModeration = true;
+            } else {
+                requestModeration = false;
+            }
+
             event = new Event(
                     0,
                     newEventDto.getAnnotation(),
@@ -27,10 +48,10 @@ public class EventMapper {
                     newEventDto.getEventDate(),
                     user,
                     newEventDto.getLocation(),
-                    newEventDto.isPaid(),
-                    newEventDto.getParticipantLimit(),
+                    isPaid,
+                    participantLimit,
                     null,
-                    newEventDto.isRequestModeration(),
+                    requestModeration,
                     EventState.SEND_TO_REVIEW,
                     newEventDto.getTitle()
             );

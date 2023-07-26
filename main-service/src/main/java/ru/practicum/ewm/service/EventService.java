@@ -8,6 +8,7 @@ import ru.practicum.ewm.state.EventState;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 
 public interface EventService {
@@ -20,9 +21,9 @@ public interface EventService {
     EventFullDto patchEventByUser(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest);
 
     List<EventFullDto> searchEvents(
-            long[] users,
-            EventState[] states,
-            long[] categories,
+            Long[] users,
+            EnumSet<EventState> states,
+            Long[] categories,
             String rangeStart,
             String rangeEnd,
             Integer from,

@@ -9,6 +9,7 @@ import ru.practicum.ewm.state.EventState;
 import ru.practicum.ewm.util.ControllerParamChecker;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 
 @RestController
@@ -65,13 +66,13 @@ public class EventController {
 
     @GetMapping("/admin/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<EventFullDto> searchEvents(@RequestParam(required = false) long[] users,
-                                           @RequestParam(required = false) EventState[] states,
-                                           @RequestParam(required = false) long[] categories,
+    public List<EventFullDto> searchEvents(@RequestParam(required = false) Long[] users,
+                                           @RequestParam(required = false) EnumSet<EventState> states,
+                                           @RequestParam(required = false) Long[] categories,
                                            @RequestParam(required = false) String rangeStart,
                                            @RequestParam(required = false) String rangeEnd,
-                                           @RequestParam(defaultValue = "0") Integer from,
-                                           @RequestParam(defaultValue = "10") Integer size) {
+                                           @RequestParam(required = false, defaultValue = "0") Integer from,
+                                           @RequestParam(required = false, defaultValue = "10") Integer size) {
         return eventService.searchEvents(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
