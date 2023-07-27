@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.ewm.model.ParticipationRequest;
 
 import java.time.LocalDateTime;
 
@@ -86,6 +87,76 @@ public class ErrorHandler {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
                 "Нельзя вносить изменения в уже опубликованные события",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleParticipationRequestNotFound(final ParticipationRequestNotFoundException e, long userId) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Request with id= " + userId + " was not found",
+                HttpStatus.NOT_FOUND,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleParticipantLimitAchieved(final ParticipantLimitAchievedException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Уже достигнут одобренных заявок на мероприятие",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleViolationParticipationRequestStatus(final ViolationParticipationRequestStatusException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Можно изменять статус только у заявок, находящихся в состоянии ожидания",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleVIncorrectParams(final IncorrectParamsException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Введены некорректные параметры запроса",
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDuplicateParticipationRequest(final DuplicateParticipationRequestException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Нельзя отправлять повторный запрос от того же пользователя на то же событие",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleRequesterMatchesInitiator(final RequesterMatchesInitiatorException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Инициатор события не может участвовать в собственном событии",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleUnacceptableEventStatusForParticipation(final UnacceptableEventStatusForParticipationException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Нельзя принять участие в еще не опубликованном событии",
                 HttpStatus.CONFLICT,
                 LocalDateTime.now());
     }

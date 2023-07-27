@@ -1,6 +1,5 @@
 package ru.practicum.ewm.service;
 
-import com.sun.jdi.event.EventSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +16,7 @@ import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.UserRepository;
-import ru.practicum.ewm.state.EventState;
+import ru.practicum.ewm.status.EventState;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -157,7 +156,6 @@ public class EventServiceImpl implements EventService {
         return EventMapper.mapToEventFullDto(events);
     }
 
-
     @Override
     public EventFullDto patchEventByAdmin(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         Event event = eventRepository.findById(eventId).get();
@@ -190,34 +188,19 @@ public class EventServiceImpl implements EventService {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
 
-/*        if (updateEventAdminRequest.getStateAction() != null) {
-            event.setState(updateEventAdminRequest.getStateAction());
-        } else {
-            EventState currentState = event.getState();
-            switch (currentState) {
-                case SEND_TO_REVIEW:
-                    event.setState(EventState.PUBLISHED);
-                    break;
-                case PUBLISH_EVENT:
-                    event.setState(EventState.CANCELED);
-                    break;
-            }
-        }*/
-
         if (updateEventAdminRequest.getStateAction() != null) {
             switch (updateEventAdminRequest.getStateAction()) {
-                case SEND_TO_REVIEW:
-                    event.setState(EventState.PENDING);
-                    break;
                 case REJECT_EVENT:
                     event.setState(EventState.CANCELED);
                     break;
                 case PUBLISH_EVENT:
                     event.setState(EventState.PUBLISHED);
+                    break;
+                default:
+                    event.setState(EventState.PENDING);
             }
         }
 
-        //event.setState(EventState.CANCELED);
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }
@@ -270,6 +253,8 @@ public class EventServiceImpl implements EventService {
                     "Дата начала события не может быть раньше, чем через 2 часа от настоящего момента");
         }
     }
+
+
 
 
 }

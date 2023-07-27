@@ -1,10 +1,8 @@
-package ru.practicum.ewm.state;
+package ru.practicum.ewm.status;
 
 public enum EventState {
     SEND_TO_REVIEW,
     PENDING,
-    PUBLISH_EVENT,
     PUBLISHED,
-    REJECT_EVENT,
     CANCELED
 }

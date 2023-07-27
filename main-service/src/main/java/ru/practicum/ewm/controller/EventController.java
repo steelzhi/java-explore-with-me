@@ -5,10 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.service.EventService;
-import ru.practicum.ewm.state.EventState;
+import ru.practicum.ewm.status.EventState;
 import ru.practicum.ewm.util.ControllerParamChecker;
 
-import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 

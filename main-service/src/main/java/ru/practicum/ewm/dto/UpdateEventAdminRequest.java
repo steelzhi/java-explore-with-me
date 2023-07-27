@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.model.Location;
-import ru.practicum.ewm.state.EventState;
+import ru.practicum.ewm.status.EventStateAction;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +28,6 @@ public class UpdateEventAdminRequest {
     private boolean paid;
     private int participantLimit;
     private boolean requestModeration;
-    private EventState stateAction;
+    private EventStateAction stateAction;
     private String title;
 }

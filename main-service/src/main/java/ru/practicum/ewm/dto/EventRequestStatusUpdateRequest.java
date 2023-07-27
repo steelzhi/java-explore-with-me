@@ -8,26 +8,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.model.Location;
 import ru.practicum.ewm.status.EventState;
+import ru.practicum.ewm.status.RequestStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class UpdateEventUserRequest {
+public class EventRequestStatusUpdateRequest {
 
-    private String annotation;
-    private Integer category;
-    private String description;
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate;
-    private Location location;
-    private boolean paid;
-    private int participantLimit;
-    private boolean requestModeration;
-    private EventState stateAction;
-    private String title;
+    private List<Integer> requestIds;
+    private RequestStatus status;
 }

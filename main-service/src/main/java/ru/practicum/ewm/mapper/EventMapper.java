@@ -4,7 +4,7 @@ import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.model.User;
-import ru.practicum.ewm.state.EventState;
+import ru.practicum.ewm.status.EventState;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class EventMapper {
                     participantLimit,
                     null,
                     requestModeration,
-                    EventState.SEND_TO_REVIEW,
+                    EventState.PENDING,
                     newEventDto.getTitle()
             );
         }
