@@ -17,6 +17,7 @@ import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.UserRepository;
 import ru.practicum.ewm.status.EventState;
+import ru.practicum.ewm.util.ControllerParamChecker;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,6 +36,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto postEvent(long userId, NewEventDto newEventDto) {
+        checkIfEventParamsAreNotCorrect(newEventDto);
+
         int catId = newEventDto.getCategory();
         Category category = getCategoryById(catId);
 
@@ -70,7 +73,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto patchEventByUser(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
-        checkIfNewDateTimeIsNotAcceptable(updateEventUserRequest);
+        checkIfEventParamsAreNotCorrect(updateEventUserRequest);
+
         Event event = eventRepository.getEventByInitiator_IdAndId(userId, eventId);
         checkIfEventExists(event);
         checkIfEventStateRestrictsToPatch(event.getState());
@@ -158,6 +162,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto patchEventByAdmin(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
+        checkIfEventParamsAreNotCorrect(updateEventAdminRequest);
+
         Event event = eventRepository.findById(eventId).get();
         checkIfEventExists(event);
         checkIfEventStateRestrictsToPatch(event.getState());
@@ -246,7 +252,52 @@ public class EventServiceImpl implements EventService {
         }
     }
 
-    private void checkIfNewDateTimeIsNotAcceptable(UpdateEventUserRequest updateEventUserRequest) {
+    private void checkIfEventParamsAreNotCorrect(NewEventDto newEventDto) {
+        if (newEventDto.getEventDate().minusHours(2).isBefore(LocalDateTime.now())) {
+            throw new IncorrectEventRequestException("Дата начала события не может быть раньше, чем через 2 часа от настоящего момента");
+        }
+
+        if (newEventDto.getAnnotation() == null || newEventDto.getAnnotation().isBlank()) {
+            throw new IncorrectEventRequestException("Краткое описание не должно быть пустым");
+        }
+
+        if (newEventDto.getAnnotation().length() < 20 || newEventDto.getAnnotation().length() > 2000) {
+            throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
+        }
+
+        if (newEventDto.getDescription() == null || newEventDto.getDescription().isBlank()) {
+            throw new IncorrectEventRequestException("Полное описание не должно быть пустым");
+        }
+
+        if (newEventDto.getDescription().length() < 20 || newEventDto.getDescription().length() > 7000) {
+            throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
+        }
+
+        if (newEventDto.getTitle() == null || newEventDto.getTitle().isBlank()) {
+            throw new IncorrectEventRequestException("Заголовок не должен быть пустым");
+        }
+
+        if (newEventDto.getTitle().length() < 3 || newEventDto.getTitle().length() > 120) {
+            throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+        }
+    }
+
+    private void checkIfEventParamsAreNotCorrect(UpdateEventUserRequest updateEventUserRequest) {
+        if (updateEventUserRequest.getAnnotation() != null
+                && (updateEventUserRequest.getAnnotation().length() < 20 || updateEventUserRequest.getAnnotation().length() > 2000)) {
+            throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
+        }
+
+        if (updateEventUserRequest.getDescription() != null
+                && (updateEventUserRequest.getDescription().length() < 20 || updateEventUserRequest.getDescription().length() > 7000)) {
+            throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
+        }
+
+        if (updateEventUserRequest.getTitle() != null
+                && (updateEventUserRequest.getTitle().length() < 3 || updateEventUserRequest.getTitle().length() > 120)) {
+            throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+        }
+
         if (updateEventUserRequest.getEventDate() != null
                 && updateEventUserRequest.getEventDate().isBefore(LocalDateTime.now().plusHours(2))) {
             throw new IncorrectEventRequestException(
@@ -254,7 +305,22 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    private void checkIfEventParamsAreNotCorrect(UpdateEventAdminRequest updateEventAdminRequest) {
+        if (updateEventAdminRequest.getAnnotation() != null
+                && (updateEventAdminRequest.getAnnotation().length() < 20 || updateEventAdminRequest.getAnnotation().length() > 2000)) {
+            throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
+        }
 
+        if (updateEventAdminRequest.getDescription() != null
+                && (updateEventAdminRequest.getDescription().length() < 20 || updateEventAdminRequest.getDescription().length() > 7000)) {
+            throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
+        }
+
+        if (updateEventAdminRequest.getTitle() != null
+                && (updateEventAdminRequest.getTitle().length() < 3 || updateEventAdminRequest.getTitle().length() > 120)) {
+            throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+        }
+    }
 
 
 }

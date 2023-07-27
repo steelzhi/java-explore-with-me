@@ -19,7 +19,6 @@ public class EventController {
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto postEvent(@PathVariable long userId, @RequestBody NewEventDto newEventDto) {
-        ControllerParamChecker.checkIfEventParamsAreNotCorrect(newEventDto);
         return eventService.postEvent(userId, newEventDto);
     }
 
@@ -43,7 +42,6 @@ public class EventController {
     public EventFullDto patchEventByUser(@PathVariable long userId,
                                    @PathVariable long eventId,
                                    @RequestBody UpdateEventUserRequest updateEventUserRequest) {
-        ControllerParamChecker.checkIfEventParamsAreNotCorrect(updateEventUserRequest);
         return eventService.patchEventByUser(userId, eventId, updateEventUserRequest);
     }
 
@@ -78,8 +76,7 @@ public class EventController {
     @PatchMapping("/admin/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto patchEventByAdmin(@PathVariable long eventId,
-                                   @RequestBody UpdateEventAdminRequest updateEventUserRequest) {
-        ControllerParamChecker.checkIfEventParamsAreNotCorrect(updateEventUserRequest);
-        return eventService.patchEventByAdmin(eventId, updateEventUserRequest);
+                                   @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+        return eventService.patchEventByAdmin(eventId, updateEventAdminRequest);
     }
 }

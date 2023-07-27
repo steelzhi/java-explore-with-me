@@ -51,7 +51,7 @@ public class ParticipationRequestController {
     public EventRequestStatusUpdateResult patchParticipationRequestsStatuses(
             @PathVariable long userId,
             @PathVariable long eventId,
-            @RequestBody EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+            @RequestBody(required = false) EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
         ControllerParamChecker.checkQueryParams(userId, eventId);
         return participationRequestService.patchParticipationRequestsStatuses(userId, eventId, eventRequestStatusUpdateRequest);
     }

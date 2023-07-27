@@ -19,7 +19,6 @@ public class UserController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto postUser(@RequestBody @NotNull UserDto userDto) {
-        ControllerParamChecker.checkIfUserParamsAreNotCorrect(userDto);
         return userService.postUser(userDto);
     }
 

@@ -19,7 +19,6 @@ public class CategoryController {
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryDto postCategory(@RequestBody @NotNull NewCategoryDto newCategoryDto) {
-        ControllerParamChecker.checkIfCategoryParamsAreNotCorrect(newCategoryDto);
         return categoryService.postCategory(newCategoryDto);
     }
 
@@ -34,7 +33,6 @@ public class CategoryController {
     @PatchMapping("/admin/categories/{catId}")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto patchCategory(@PathVariable Long catId, @RequestBody CategoryDto categoryDto) {
-        ControllerParamChecker.checkIfCategoryParamsAreNotCorrect(categoryDto);
         return categoryService.patchCategory(catId, categoryDto);
     }
 

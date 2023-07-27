@@ -46,7 +46,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new UnacceptableEventStatusForParticipationException("Нельзя принять участие в еще не опубликованном событии");
         }
 
-        if (participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId) != null) {
+        if (!participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId).isEmpty()) {
             throw new DuplicateParticipationRequestException("Нельзя отправлять повторный запрос от того же пользователя на то же событие");
         }
 
@@ -56,7 +56,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                     participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);
 
             if (allConfirmedParticipationRequestsForCurrentEvent.size() >= event.getParticipantLimit()) {
-                throw new ParticipantLimitAchievedException("Уже достигнут одобренных заявок на мероприятие");
+                throw new ParticipantLimitAchievedException("Уже достигнут лимит одобренных заявок на мероприятие");
             }
         }
 
@@ -69,9 +69,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 requester,
                 RequestStatus.PENDING);
 
-
-
-        if (event.getParticipantLimit() == 0 || event.getRequestModeration() == false) {
+        if (event.getRequestModeration() == false) {
             participationRequest.setStatus(RequestStatus.CONFIRMED);
         }
 
@@ -117,6 +115,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             long userId,
             long eventId,
             EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+
+        if (eventRequestStatusUpdateRequest == null) {
+            throw new ParticipantLimitAchievedException("Уже достигнут лимит одобренных заявок на мероприятие");
+        }
+
         Event event = eventRepository.findById(eventId).get();
         List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId);
 

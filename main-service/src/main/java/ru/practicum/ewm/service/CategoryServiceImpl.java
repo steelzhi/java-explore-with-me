@@ -11,12 +11,14 @@ import ru.practicum.ewm.dto.NewCategoryDto;
 import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.exception.CategoryNotFoundException;
 import ru.practicum.ewm.exception.DuplicateCategoryNameException;
+import ru.practicum.ewm.exception.IncorrectCategoryRequestException;
 import ru.practicum.ewm.mapper.CategoryMapper;
 import ru.practicum.ewm.mapper.UserMapper;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.UserRepository;
+import ru.practicum.ewm.util.ControllerParamChecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto postCategory(NewCategoryDto newCategoryDto) {
+        checkIfCategoryParamsAreNotCorrect(newCategoryDto);
         checkCategoryName(newCategoryDto.getName());
 
         Category category = CategoryMapper.mapToCategory(newCategoryDto);
@@ -43,6 +46,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDto patchCategory(Long catId, CategoryDto categoryDto) {
+        checkIfCategoryParamsAreNotCorrect(categoryDto);
+
         Optional<Category> category = categoryRepository.findById(catId);
         if (category.isEmpty()) {
             throw new CategoryNotFoundException("Нет категории с указанным id");
@@ -87,6 +92,26 @@ public class CategoryServiceImpl implements CategoryService {
     private void checkCategoryName(String categoryName) {
         if (categoryRepository.findCategoryByName(categoryName) != null) {
             throw new DuplicateCategoryNameException("Категория с таким именем уже существует");
+        }
+    }
+
+    private void checkIfCategoryParamsAreNotCorrect(NewCategoryDto newCategoryDto) {
+        if (newCategoryDto.getName() == null || newCategoryDto.getName().isBlank()) {
+            throw new IncorrectCategoryRequestException("Попытка добавления категории без имени или с пустым именем");
+        }
+
+        if (newCategoryDto.getName().length() > 50) {
+            throw new IncorrectCategoryRequestException("Попытка добавления категории с длиной имени > 50 символов");
+        }
+    }
+
+    private void checkIfCategoryParamsAreNotCorrect(CategoryDto categoryDto) {
+        if (categoryDto.getName() == null || categoryDto.getName().isBlank()) {
+            throw new IncorrectCategoryRequestException("Попытка добавления категории без имени или с пустым именем");
+        }
+
+        if (categoryDto.getName().length() > 50) {
+            throw new IncorrectCategoryRequestException("Попытка добавления категории с длиной имени > 50 символов");
         }
     }
 }

@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.ewm.model.ParticipationRequest;
 
 import java.time.LocalDateTime;
 
@@ -106,7 +105,7 @@ public class ErrorHandler {
     public ApiError handleParticipantLimitAchieved(final ParticipantLimitAchievedException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
-                "Уже достигнут одобренных заявок на мероприятие",
+                "Уже достигнут лимит одобренных заявок на мероприятие",
                 HttpStatus.CONFLICT,
                 LocalDateTime.now());
     }
@@ -123,7 +122,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleVIncorrectParams(final IncorrectParamsException e) {
+    public ApiError handleIncorrectParams(final IncorrectParamsException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
                 "Введены некорректные параметры запроса",
