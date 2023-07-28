@@ -31,7 +31,7 @@ public class ParticipationRequestMapper {
     }
 
     public static List<ParticipationRequestDto> mapToParticipationRequestDto(List<ParticipationRequest> participationRequests) {
-        List<ParticipationRequestDto> participationRequestDtos = null;
+        List<ParticipationRequestDto> participationRequestDtos = new ArrayList<>();
         if (participationRequests != null) {
             for (ParticipationRequest participationRequest : participationRequests) {
                 participationRequestDtos.add(mapToParticipationRequestDto(participationRequest));

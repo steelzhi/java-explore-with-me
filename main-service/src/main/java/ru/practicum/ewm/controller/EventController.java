@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.service.EventService;
-import ru.practicum.ewm.status.EventState;
-import ru.practicum.ewm.util.ControllerParamChecker;
+import ru.practicum.ewm.enums.EventState;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -40,26 +40,10 @@ public class EventController {
     @PatchMapping("/users/{userId}/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto patchEventByUser(@PathVariable long userId,
-                                   @PathVariable long eventId,
-                                   @RequestBody UpdateEventUserRequest updateEventUserRequest) {
+                                         @PathVariable long eventId,
+                                         @RequestBody UpdateEventUserRequest updateEventUserRequest) {
         return eventService.patchEventByUser(userId, eventId, updateEventUserRequest);
     }
-
-
-// нужно добавить еще 2 эндпоинта
-/*    @GetMapping("/users/{userId}/events/{eventId}/requests")
-    @ResponseStatus(HttpStatus.OK)
-    public List<> getParticipationRequestsFromUser() {
-
-
-
-
-    }
-
-
-    @PatchMapping("/users/{userId}/events/{eventId}/requests")
-    */
-
 
     @GetMapping("/admin/events")
     @ResponseStatus(HttpStatus.OK)
@@ -76,7 +60,22 @@ public class EventController {
     @PatchMapping("/admin/events/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto patchEventByAdmin(@PathVariable long eventId,
-                                   @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
+                                          @RequestBody UpdateEventAdminRequest updateEventAdminRequest) {
         return eventService.patchEventByAdmin(eventId, updateEventAdminRequest);
+    }
+
+    @GetMapping("/events")
+    @ResponseStatus(HttpStatus.OK)
+    public List<EventShortDto> getPublishedEvents(@RequestParam String text,
+                                                  @RequestParam(required = false) Long[] categories,
+                                                  @RequestParam(required = false) Boolean paid,
+                                                  @RequestParam(required = false) String rangeStart,
+                                                  @RequestParam(required = false) String rangeEnd,
+                                                  @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
+                                                  @RequestParam(required = false) EventSort sort,
+                                                  @RequestParam(required = false, defaultValue = "0") Integer from,
+                                                  @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return eventService.getPublishedEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+
     }
 }

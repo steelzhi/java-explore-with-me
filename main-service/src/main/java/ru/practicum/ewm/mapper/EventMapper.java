@@ -4,7 +4,7 @@ import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.model.User;
-import ru.practicum.ewm.status.EventState;
+import ru.practicum.ewm.enums.EventState;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

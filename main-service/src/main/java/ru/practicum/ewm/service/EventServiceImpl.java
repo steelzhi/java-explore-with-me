@@ -6,18 +6,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.enums.EventSort;
+import ru.practicum.ewm.enums.RequestStatus;
 import ru.practicum.ewm.exception.EventNotFoundException;
 import ru.practicum.ewm.exception.IncorrectEventRequestException;
 import ru.practicum.ewm.exception.PatchRestrictionException;
 import ru.practicum.ewm.mapper.EventMapper;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.Event;
+import ru.practicum.ewm.model.ParticipationRequest;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
+import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
-import ru.practicum.ewm.status.EventState;
-import ru.practicum.ewm.util.ControllerParamChecker;
+import ru.practicum.ewm.enums.EventState;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,6 +35,7 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ParticipationRequestRepository participationRequestRepository;
 
 
     @Override
@@ -55,7 +59,6 @@ public class EventServiceImpl implements EventService {
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
         Page<Event> pagedList = eventRepository.getAllEventsByInitiator_Id(userId, page);
-
 
         if (pagedList != null) {
             events = pagedList.getContent();
@@ -151,7 +154,7 @@ public class EventServiceImpl implements EventService {
             categories = new Long[allCategoriesIds.size()];
             allCategoriesIds.toArray(categories);
         }
-        Page<Event> pagedList = eventRepository.searchEvents(users, states, categories, startTime, endTime, page);
+        Page<Event> pagedList = eventRepository.searchInitiatorEvents(users, states, categories, startTime, endTime, page);
 
         if (pagedList != null) {
             events = pagedList.getContent();
@@ -215,6 +218,85 @@ public class EventServiceImpl implements EventService {
         return EventMapper.mapToEventFullDto(savedEvent);
     }
 
+    @Override
+    public List<EventShortDto> getPublishedEvents(
+            String text,
+            Long[] categories,
+            Boolean paid,
+            String rangeStart,
+            String rangeEnd,
+            boolean onlyAvailable,
+            EventSort sort,
+            Integer from,
+            Integer size) {
+
+        if (categories == null) {
+            List<Category> allCategories = categoryRepository.findAll();
+            List<Long> allCategoriesIds = allCategories.stream()
+                    .map(category -> category.getId())
+                    .collect(Collectors.toList());
+
+            categories = new Long[allCategories.size()];
+            for (int i = 0; i < allCategories.size(); i++) {
+                categories[i] = allCategoriesIds.get(i);
+            }
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startTime;
+        if (rangeStart != null) {
+            startTime = LocalDateTime.parse(rangeStart, formatter);
+        } else {
+            startTime = LocalDateTime.now();
+        }
+        LocalDateTime endTime = null;
+        if (rangeStart != null) {
+            endTime = LocalDateTime.parse(rangeEnd, formatter);
+        }
+
+        List<Event> events = new ArrayList<>();
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
+        Page<Event> pagedList = eventRepository.searchPublishedEvents(categories, paid, startTime, endTime, EventState.PUBLISHED, text, page);
+        if (pagedList != null) {
+            events = pagedList.getContent();
+        }
+
+        List<EventShortDto> eventShortDtos = new ArrayList<>();
+        for (Event event : events) {
+            List<ParticipationRequest> onlyConfirmedParticipationRequests =
+                    participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+
+            if (onlyAvailable && event.getParticipantLimit() <= onlyConfirmedParticipationRequests.size()) {
+                break;
+            }
+
+            EventShortDto eventShortDto = EventMapper.mapToEventShortDto(event);
+            eventShortDto.setConfirmedRequests(onlyConfirmedParticipationRequests.size());
+            eventShortDtos.add(eventShortDto);
+        }
+
+        if (sort == EventSort.EVENT_DATE) {
+            eventShortDtos.sort((event1, event2) -> {
+                if (event1.getEventDate().isBefore(event2.getEventDate())
+                        || event1.getEventDate().equals(event2.getEventDate())) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+        } else {
+            eventShortDtos.sort((event1, event2) -> {
+                if (event1.getViews() <= event2.getViews()) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+        }
+
+        return eventShortDtos;
+    }
+
     private Category getCategoryById(long catId) {
         return categoryRepository.findById(catId).get();
     }
@@ -246,8 +328,8 @@ public class EventServiceImpl implements EventService {
                                                   Integer from,
                                                   Integer size) {
         if ((startTime != null && endTime != null && endTime.isBefore(startTime))
-        || from < 0
-        || size < 0) {
+                || from < 0
+                || size < 0) {
             throw new IncorrectEventRequestException("В поисковом запросе заданы некорректные параметры");
         }
     }

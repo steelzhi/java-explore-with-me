@@ -1,25 +1,20 @@
 package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
-import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.exception.*;
 import ru.practicum.ewm.mapper.ParticipationRequestMapper;
-import ru.practicum.ewm.mapper.UserMapper;
 import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.model.ParticipationRequest;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
-import ru.practicum.ewm.status.EventState;
-import ru.practicum.ewm.status.RequestStatus;
+import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -50,7 +45,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new DuplicateParticipationRequestException("Нельзя отправлять повторный запрос от того же пользователя на то же событие");
         }
 
-
         if (event.getParticipantLimit() > 0) {
             List<ParticipationRequest> allConfirmedParticipationRequestsForCurrentEvent =
                     participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);
@@ -69,11 +63,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 requester,
                 RequestStatus.PENDING);
 
-        if (event.getRequestModeration() == false) {
+        if (!event.getRequestModeration()) {
             participationRequest.setStatus(RequestStatus.CONFIRMED);
         }
 
         ParticipationRequest savedParticipantRequest = participationRequestRepository.save(participationRequest);
+        ParticipationRequestDto participationRequestDto = ParticipationRequestMapper.mapToParticipationRequestDto(savedParticipantRequest);
         return ParticipationRequestMapper.mapToParticipationRequestDto(savedParticipantRequest);
     }
 
@@ -104,7 +99,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     @Override
     public List<ParticipationRequestDto> getParticipationRequestByUserInParticularEvent(long userId, long eventId) {
-        List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId);
+        List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByEvent_Initiator_IdAndEvent_Id(userId, eventId);
         List<ParticipationRequestDto> participationRequestDtos = ParticipationRequestMapper.mapToParticipationRequestDto(participationRequests);
 
         return participationRequestDtos;
