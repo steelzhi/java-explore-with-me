@@ -37,17 +37,6 @@ public class CompilationMapper {
         return compilationDto;
     }
 
-    public static Compilation patchCompilation(long id, UpdateCompilationRequest updateCompilationRequest, List<Event> events) {
-        Compilation compilation = null;
-        if (updateCompilationRequest != null) {
-            compilation = new Compilation(
-                    id,
-                    events,
-                    updateCompilationRequest.isPinned(),
-                    updateCompilationRequest.getTitle());
-        }
-        return compilation;
-    }
 
 
 }

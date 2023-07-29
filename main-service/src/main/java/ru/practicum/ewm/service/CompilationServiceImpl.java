@@ -32,7 +32,10 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto postCompilation(NewCompilationDto newCompilationDto) {
         checkIfCompilationParamsAreNotCorrect(newCompilationDto);
-        List<Event> events = eventRepository.findAllById(newCompilationDto.getEvents());
+        List<Event> events = new ArrayList<>();
+        if (newCompilationDto.getEvents() != null) {
+            events = eventRepository.findAllById(newCompilationDto.getEvents());
+        }
         Compilation compilation = CompilationMapper.mapToCompilation(newCompilationDto, events);
         Compilation savedCompilation = compilationRepository.save(compilation);
 
@@ -53,10 +56,16 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     public CompilationDto patchCompilation(long id, UpdateCompilationRequest updateCompilationRequest) {
         checkIfCompilationParamsAreNotCorrect(updateCompilationRequest);
-        List<Event> events = eventRepository.findAllById(updateCompilationRequest.getEvents());
-        Compilation compilation = CompilationMapper.patchCompilation(id, updateCompilationRequest, events);
+        List<Event> events = new ArrayList<>();
+        if (updateCompilationRequest.getEvents() != null) {
+           // events = eventRepository.findAllById(updateCompilationRequest.getEvents());
+            List<Event> all = eventRepository.findAll();
+            events = eventRepository.getAllEventsByIdInAndState(updateCompilationRequest.getEvents(), EventState.PUBLISHED);
+        }
+        Compilation currentCompilation = compilationRepository.getReferenceById(id);
+        Compilation patchedCompilation = patchCompilation(id, currentCompilation, updateCompilationRequest, events);
 
-        Compilation savedCompilation = compilationRepository.save(compilation);
+        Compilation savedCompilation = compilationRepository.save(patchedCompilation);
         List<EventShortDto> eventShortDtos = EventMapper.mapToEventShortDto(events);
         CompilationDto compilationDto = CompilationMapper.mapToCompilationDto(savedCompilation, eventShortDtos);
         return compilationDto;
@@ -96,14 +105,35 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     private void checkIfCompilationParamsAreNotCorrect(NewCompilationDto newCompilationDto) {
+        if (newCompilationDto.getTitle() == null || newCompilationDto.getTitle().isBlank()) {
+            throw new IncorrectCompilationRequestException("У подборки должен быть заголовок");
+        }
+
         if (newCompilationDto.getTitle().length() < 1 || newCompilationDto.getTitle().length() > 50) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
     }
 
     private void checkIfCompilationParamsAreNotCorrect(UpdateCompilationRequest updateCompilationRequest) {
-        if (updateCompilationRequest.getTitle().length() < 1 || updateCompilationRequest.getTitle().length() > 50) {
+        if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()
+                && (updateCompilationRequest.getTitle().length() < 1 || updateCompilationRequest.getTitle().length() > 50)) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
+    }
+
+    private Compilation patchCompilation(long id, Compilation currentcompilation, UpdateCompilationRequest updateCompilationRequest, List<Event> events) {
+        Compilation compilation = currentcompilation;
+
+        if (events != null) {
+            compilation.setEvents(events);
+        }
+        if (updateCompilationRequest.getPinned() != null) {
+            compilation.setPinned(updateCompilationRequest.getPinned());
+        }
+        if (updateCompilationRequest.getTitle() != null) {
+            compilation.setTitle(updateCompilationRequest.getTitle());
+        }
+
+        return compilation;
     }
 }

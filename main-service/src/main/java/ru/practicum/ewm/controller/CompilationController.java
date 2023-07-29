@@ -29,9 +29,9 @@ public class CompilationController {
 
     @PatchMapping("/admin/compilations/{compId}")
     @ResponseStatus(HttpStatus.OK)
-    public CompilationDto patchCompilation(@PathVariable long id,
+    public CompilationDto patchCompilation(@PathVariable long compId,
                                            @RequestBody UpdateCompilationRequest updateCompilationRequest) {
-        return compilationService.patchCompilation(id, updateCompilationRequest);
+        return compilationService.patchCompilation(compId, updateCompilationRequest);
     }
 
     @GetMapping("/compilations")

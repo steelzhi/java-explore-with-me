@@ -15,6 +15,6 @@ import java.util.List;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class UpdateCompilationRequest {
     private List<Long> events;
-    private boolean pinned;
+    private Boolean pinned;
     private String title;
 }
