@@ -15,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Page<User> getAllUsersByIdIn(Long[] ids, Pageable page);
 
+    int countAllUsersByName(String name);
+
 }

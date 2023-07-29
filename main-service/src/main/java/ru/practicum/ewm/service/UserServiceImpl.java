@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.UserDto;
+import ru.practicum.ewm.exception.DuplicateUserNameException;
 import ru.practicum.ewm.exception.IncorrectUserRequestException;
 import ru.practicum.ewm.mapper.UserMapper;
 import ru.practicum.ewm.model.User;
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto postUser(UserDto userDto) {
         checkIfUserParamsAreNotCorrect(userDto);
+        checkIfNameAlreadyExists(userDto);
         User user = UserMapper.mapToUser(userDto);
         User savedUser = userRepository.save(user);
         return UserMapper.mapToUserDto(savedUser);
@@ -74,6 +76,12 @@ public class UserServiceImpl implements UserService {
 
         if (userDto.getEmail().split("@")[1].split("\\.")[0].length() > 63) {
             throw new IncorrectUserRequestException("Попытка добавления пользователя email длиной > 63 символов после значка @ ");
+        }
+    }
+
+    private void checkIfNameAlreadyExists(UserDto userDto) {
+        if (userRepository.countAllUsersByName(userDto.getName()) > 0) {
+            throw new DuplicateUserNameException("Это имя уже занято другим пользователем");
         }
     }
 }

@@ -53,7 +53,8 @@ public class EventMapper {
                     null,
                     requestModeration,
                     EventState.PENDING,
-                    newEventDto.getTitle()
+                    newEventDto.getTitle(),
+                    null
             );
         }
         return event;

@@ -12,11 +12,13 @@ import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.exception.CategoryNotFoundException;
 import ru.practicum.ewm.exception.DuplicateCategoryNameException;
 import ru.practicum.ewm.exception.IncorrectCategoryRequestException;
+import ru.practicum.ewm.exception.RemovingCategoryException;
 import ru.practicum.ewm.mapper.CategoryMapper;
 import ru.practicum.ewm.mapper.UserMapper;
 import ru.practicum.ewm.model.Category;
 import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.CategoryRepository;
+import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.UserRepository;
 import ru.practicum.ewm.util.ControllerParamChecker;
 
@@ -28,6 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public CategoryDto postCategory(NewCategoryDto newCategoryDto) {
@@ -41,6 +44,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void deleteCategory(Long catId) {
+        if (eventRepository.countAllByCategory_Id(catId) > 0) {
+            throw new RemovingCategoryException("Нельзя удалить данную категорию, т.к. к ней уже привязаны события");
+        }
+
         categoryRepository.deleteById(catId);
     }
 

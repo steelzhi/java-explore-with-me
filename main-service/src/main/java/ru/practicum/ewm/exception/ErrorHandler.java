@@ -22,6 +22,16 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDuplicateUserName(final DuplicateUserNameException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Это имя уже занято другим пользователем",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleViolationUserRestrictions(final ViolationUserRestrictionsException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
@@ -71,12 +81,42 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleRemovingCategory(final RemovingCategoryException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Нельзя удалить данную категорию, т.к. к ней уже привязаны события",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleEventNotFound(final EventNotFoundException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "The required object was not found.",
+                HttpStatus.NOT_FOUND,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleIncorrectEventRequest(final IncorrectEventRequestException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
                 "Некорректная дата начала события",
                 HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleCanceledEvent(final CanceledEventException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Нельзя опубликовать отмененное событие",
+                HttpStatus.CONFLICT,
                 LocalDateTime.now());
     }
 
@@ -157,6 +197,26 @@ public class ErrorHandler {
                 e.getMessage(),
                 "Нельзя принять участие в еще не опубликованном событии",
                 HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleIncorrectCompilationRequest(final IncorrectCompilationRequestException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Некорректная длина заголовка",
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleCompilationNotFound(final CompilationNotFoundException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Подборка не найдена",
+                HttpStatus.NOT_FOUND,
                 LocalDateTime.now());
     }
 

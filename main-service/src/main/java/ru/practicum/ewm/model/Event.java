@@ -10,6 +10,10 @@ import ru.practicum.ewm.enums.EventState;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -54,4 +58,11 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventState state;
     private String title;
+
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "compilation_events",
+            joinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "compilation_id", referencedColumnName = "id"))
+    private List<Compilation> compilations = new ArrayList<>();
 }

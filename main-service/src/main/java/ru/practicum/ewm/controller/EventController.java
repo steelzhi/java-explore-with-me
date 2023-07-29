@@ -78,6 +78,11 @@ public class EventController {
                                                   @RequestParam(required = false, defaultValue = "10") Integer size,
                                                   HttpServletRequest request) {
         return eventService.getPublishedEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
+    }
 
+    @GetMapping("/events/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public EventFullDto getPublishedEvent(@PathVariable long id, HttpServletRequest request) {
+        return eventService.getPublishedEvent(id, request);
     }
 }

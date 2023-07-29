@@ -10,6 +10,7 @@ import ru.practicum.ewm.client.EventClient;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.enums.RequestStatus;
+import ru.practicum.ewm.exception.CanceledEventException;
 import ru.practicum.ewm.exception.EventNotFoundException;
 import ru.practicum.ewm.exception.IncorrectEventRequestException;
 import ru.practicum.ewm.exception.PatchRestrictionException;
@@ -214,6 +215,7 @@ public class EventServiceImpl implements EventService {
                     event.setState(EventState.CANCELED);
                     break;
                 case PUBLISH_EVENT:
+                    checkIfEventWasCanceled(eventId);
                     event.setState(EventState.PUBLISHED);
                     break;
                 default:
@@ -272,7 +274,6 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
-        List<Event> events1 = eventRepository.findAll();
         Page<Event> pagedList = eventRepository.searchPublishedEvents(categories, paid, startTime, endTime, EventState.PUBLISHED, text, page);
 
         if (pagedList != null) {
@@ -344,6 +345,35 @@ public class EventServiceImpl implements EventService {
         }
 
         return eventShortDtos;
+    }
+
+    @Override
+    public EventFullDto getPublishedEvent(long id, HttpServletRequest request) {
+        Event event = eventRepository.findById(id).get();
+        checkIfEventIsNotPublished(event);
+        EventFullDto eventFullDto = EventMapper.mapToEventFullDto(event);
+
+        String ip = request.getRemoteAddr();
+        String uri = request.getRequestURI();
+        Hit hit = new Hit(0, "ewm-main-service", uri, ip, LocalDateTime.now());
+        eventClient.postHit(hit);
+
+        if (eventFullDto != null) {
+            String[] urisArray = new String[1];
+            urisArray[0] = "/events/" + eventFullDto.getId();
+            ResponseEntity<Object> statsEntity = eventClient.getStats(
+                    null,
+                    null,
+                    urisArray,
+                    true);
+
+            ArrayList<LinkedHashMap<String, Object>> body = (ArrayList<LinkedHashMap<String, Object>>) statsEntity.getBody();
+            if (!body.isEmpty()) {
+                eventFullDto.setViews((int) body.get(0).get("hits"));
+            }
+        }
+
+        return eventFullDto;
     }
 
     private Category getCategoryById(long catId) {
@@ -461,5 +491,17 @@ public class EventServiceImpl implements EventService {
         }
     }
 
+    private void checkIfEventWasCanceled(long eventId) {
+        Event event = eventRepository.findById(eventId).get();
+        if (event.getState() == EventState.CANCELED) {
+            throw new CanceledEventException("Нельзя опубликовать отмененное событие");
+        }
+    }
+
+    private void checkIfEventIsNotPublished(Event event) {
+        if (event.getState() != EventState.PUBLISHED) {
+            throw new EventNotFoundException("Информация о событии не найдена");
+        }
+    }
 
 }
