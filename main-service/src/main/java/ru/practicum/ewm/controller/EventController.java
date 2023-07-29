@@ -8,6 +8,7 @@ import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.service.EventService;
 import ru.practicum.ewm.enums.EventState;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -66,7 +67,7 @@ public class EventController {
 
     @GetMapping("/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<EventShortDto> getPublishedEvents(@RequestParam String text,
+    public List<EventShortDto> getPublishedEvents(@RequestParam(required = false) String text,
                                                   @RequestParam(required = false) Long[] categories,
                                                   @RequestParam(required = false) Boolean paid,
                                                   @RequestParam(required = false) String rangeStart,
@@ -74,8 +75,9 @@ public class EventController {
                                                   @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
                                                   @RequestParam(required = false) EventSort sort,
                                                   @RequestParam(required = false, defaultValue = "0") Integer from,
-                                                  @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return eventService.getPublishedEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
+                                                  @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                  HttpServletRequest request) {
+        return eventService.getPublishedEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
 
     }
 }

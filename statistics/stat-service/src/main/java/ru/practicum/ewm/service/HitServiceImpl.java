@@ -26,8 +26,15 @@ public class HitServiceImpl implements HitService {
         List<Stats> stats;
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTimeStart = LocalDateTime.parse(start, formatter);
-        LocalDateTime dateTimeEnd = LocalDateTime.parse(end, formatter);
+
+        LocalDateTime dateTimeStart = null;
+        if (start != null) {
+            dateTimeStart = LocalDateTime.parse(start, formatter);
+        }
+        LocalDateTime dateTimeEnd = null;
+        if (end != null) {
+            dateTimeEnd = LocalDateTime.parse(end, formatter);
+        }
 
         List<String> allUris = new ArrayList<>();
 

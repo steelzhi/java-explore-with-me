@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.ewm.client.EventClient;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.enums.RequestStatus;
@@ -12,20 +14,19 @@ import ru.practicum.ewm.exception.EventNotFoundException;
 import ru.practicum.ewm.exception.IncorrectEventRequestException;
 import ru.practicum.ewm.exception.PatchRestrictionException;
 import ru.practicum.ewm.mapper.EventMapper;
-import ru.practicum.ewm.model.Category;
-import ru.practicum.ewm.model.Event;
-import ru.practicum.ewm.model.ParticipationRequest;
-import ru.practicum.ewm.model.User;
+import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
 import ru.practicum.ewm.enums.EventState;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final ParticipationRequestRepository participationRequestRepository;
+    private final EventClient eventClient;
 
 
     @Override
@@ -160,7 +162,16 @@ public class EventServiceImpl implements EventService {
             events = pagedList.getContent();
         }
 
-        return EventMapper.mapToEventFullDto(events);
+        List<EventFullDto> eventFullDtos = new ArrayList<>();
+        for (Event event : events) {
+            int numberOfParticipationRequests =
+                    participationRequestRepository.countParticipationRequestByEvent_Id(event.getId());
+            EventFullDto eventFullDto = EventMapper.mapToEventFullDto(event);
+            eventFullDto.setConfirmedRequests(numberOfParticipationRequests);
+            eventFullDtos.add(eventFullDto);
+        }
+
+        return eventFullDtos;
     }
 
     @Override
@@ -228,7 +239,10 @@ public class EventServiceImpl implements EventService {
             boolean onlyAvailable,
             EventSort sort,
             Integer from,
-            Integer size) {
+            Integer size,
+            HttpServletRequest request) {
+
+        isTextANumber(text);
 
         if (categories == null) {
             List<Category> allCategories = categoryRepository.findAll();
@@ -243,11 +257,13 @@ public class EventServiceImpl implements EventService {
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+
         LocalDateTime startTime;
         if (rangeStart != null) {
             startTime = LocalDateTime.parse(rangeStart, formatter);
         } else {
-            startTime = LocalDateTime.now();
+            startTime = now;
         }
         LocalDateTime endTime = null;
         if (rangeStart != null) {
@@ -256,7 +272,9 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
+        List<Event> events1 = eventRepository.findAll();
         Page<Event> pagedList = eventRepository.searchPublishedEvents(categories, paid, startTime, endTime, EventState.PUBLISHED, text, page);
+
         if (pagedList != null) {
             events = pagedList.getContent();
         }
@@ -292,6 +310,37 @@ public class EventServiceImpl implements EventService {
                     return 1;
                 }
             });
+        }
+
+        String ip = request.getRemoteAddr();
+        String uri = request.getRequestURI();
+        Hit hit = new Hit(0, "ewm-main-service", uri, ip, now);
+        eventClient.postHit(hit);
+
+        if (!eventShortDtos.isEmpty()) {
+            List<String> urisList = new ArrayList<>();
+            for (EventShortDto eventShortDto : eventShortDtos) {
+                urisList.add("/events/" + eventShortDto.getId());
+            }
+
+            String[] urisArray = new String[urisList.size()];
+            urisList.toArray(urisArray);
+            ResponseEntity<Object> statsEntity = eventClient.getStats(
+                    null,
+                    null,
+                    urisArray,
+                    false);
+
+            ArrayList<LinkedHashMap<String, Object>> body = (ArrayList<LinkedHashMap<String, Object>>) statsEntity.getBody();
+            if (!body.isEmpty()) {
+                for (int i = 0; i < body.size(); i++) {
+                    for (EventShortDto eventShortDto : eventShortDtos) {
+                        if (body.get(i).get("uri").equals("events/" + eventShortDto.getId())) {
+                            eventShortDto.setViews((int) body.get(i).get("hits"));
+                        }
+                    }
+                }
+            }
         }
 
         return eventShortDtos;
@@ -401,6 +450,14 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getTitle() != null
                 && (updateEventAdminRequest.getTitle().length() < 3 || updateEventAdminRequest.getTitle().length() > 120)) {
             throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+        }
+    }
+
+    private void isTextANumber(String text) {
+        try {
+            Integer.parseInt(text);
+            throw new IncorrectEventRequestException("Текст не может быть числом");
+        } catch (NumberFormatException e) {
         }
     }
 

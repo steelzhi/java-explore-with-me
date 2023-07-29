@@ -5,6 +5,7 @@ import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.enums.EventState;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -36,5 +37,6 @@ public interface EventService {
                                            boolean onlyAvailable,
                                            EventSort sort,
                                            Integer from,
-                                           Integer size);
+                                           Integer size,
+                                           HttpServletRequest request);
 }

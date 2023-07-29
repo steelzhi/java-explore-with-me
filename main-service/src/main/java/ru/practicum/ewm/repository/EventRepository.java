@@ -31,21 +31,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                       LocalDateTime endTime,
                                       Pageable page);
 
-/*    @Query("SELECT e " +
-            "FROM Event AS e " +
-            "WHERE (LOWER(e.annotation) LIKE LOWER('%?1%') " +
-            "OR LOWER(e.description) LIKE LOWER('%?1%')) " +
-            "AND e.category.id IN ?2 " +
-            "AND e.paid = COALESCE(?3, e.paid) " +
-            "AND e.eventDate >= COALESCE(?4, e.eventDate) " +
-            "AND e.eventDate <= COALESCE(?5, e.eventDate) ")
-    Page<Event> searchPublishedEvents(String text,
-                                      Long[] categories,
-                                      boolean paid,
-                                      LocalDateTime startTime,
-                                      LocalDateTime endTime,
-                                      Pageable page);*/
-
     @Query("SELECT e " +
             "FROM Event AS e " +
             "WHERE e.category.id IN ?1 " +
@@ -53,8 +38,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "AND e.eventDate >= COALESCE(?3, e.eventDate) " +
             "AND e.eventDate <= COALESCE(?4, e.eventDate) " +
             "AND e.state = ?5 " +
-            "AND (LOWER(e.annotation) LIKE LOWER('%?6%') " +
-            "OR LOWER(e.description) LIKE LOWER('%?6%'))")
+            "AND LOWER(e.annotation) LIKE COALESCE(LOWER(CONCAT('%', ?6,'%')), LOWER(e.annotation)) " +
+            "OR LOWER(e.description) LIKE COALESCE(LOWER(CONCAT('%', ?6,'%')), LOWER(e.description))")
     Page<Event> searchPublishedEvents(Long[] categories,
                                       Boolean paid,
                                       LocalDateTime startTime,
@@ -62,6 +47,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                       EventState state,
                                       String text,
                                       Pageable page);
-
-
 }
