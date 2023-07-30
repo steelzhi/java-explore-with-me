@@ -74,7 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDto> getCategories(Integer from, Integer size) {
         List<Category> categories = new ArrayList<>();
 
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
+        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").ascending());
         Page<Category> pagedList = categoryRepository.getAllCategories(page);
 
         if (pagedList != null) {
