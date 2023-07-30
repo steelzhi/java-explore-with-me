@@ -184,7 +184,8 @@ public class EventServiceImpl implements EventService {
         List<EventFullDto> eventFullDtos = new ArrayList<>();
         for (Event event : events) {
             int numberOfParticipationRequests =
-                    participationRequestRepository.countParticipationRequestByEvent_Id(event.getId());
+                    participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(
+                            event.getId(), RequestStatus.CONFIRMED);
             EventFullDto eventFullDto = EventMapper.mapToEventFullDto(event);
             eventFullDto.setConfirmedRequests(numberOfParticipationRequests);
             eventFullDtos.add(eventFullDto);
