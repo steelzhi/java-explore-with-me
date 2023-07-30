@@ -1,6 +1,7 @@
 package ru.practicum.ewm.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.Stats;
 import ru.practicum.ewm.model.Hit;
@@ -14,6 +15,7 @@ public class HitController {
     private final HitService hitService;
 
     @PostMapping("/hit")
+    @ResponseStatus(HttpStatus.CREATED)
     public Hit postHit(@RequestBody Hit hit) {
         return hitService.saveHit(hit);
     }
