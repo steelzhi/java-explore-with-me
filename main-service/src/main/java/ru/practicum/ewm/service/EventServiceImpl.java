@@ -102,17 +102,21 @@ public class EventServiceImpl implements EventService {
         if (updateEventUserRequest.getLocation() != null) {
             event.setLocation(updateEventUserRequest.getLocation());
         }
+        if (updateEventUserRequest.getPaid() != null) {
+            event.setPaid(updateEventUserRequest.getPaid());
+        }
         if (updateEventUserRequest.getParticipantLimit() != event.getParticipantLimit()
                 && updateEventUserRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         }
-
+        if (updateEventUserRequest.getRequestModeration() != null) {
+            event.setRequestModeration(updateEventUserRequest.getRequestModeration());
+        }
         if (updateEventUserRequest.getStateAction() == EventState.CANCEL_REVIEW) {
             event.setState(EventState.CANCELED);
         } else {
             event.setState(EventState.PENDING);
         }
-
         if (updateEventUserRequest.getTitle() != null) {
             event.setTitle(updateEventUserRequest.getTitle());
         }
@@ -210,13 +214,16 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getLocation() != null) {
             event.setLocation(updateEventAdminRequest.getLocation());
         }
-        event.setPaid(updateEventAdminRequest.isPaid());
+        if (updateEventAdminRequest.getPaid() != null) {
+            event.setPaid(updateEventAdminRequest.getPaid());
+        }
         if (updateEventAdminRequest.getParticipantLimit() != event.getParticipantLimit()
                 && updateEventAdminRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
-        event.setRequestModeration(updateEventAdminRequest.isRequestModeration());
-
+        if (updateEventAdminRequest.getRequestModeration() != null) {
+            event.setRequestModeration(updateEventAdminRequest.getRequestModeration());
+        }
         if (updateEventAdminRequest.getStateAction() != null) {
             switch (updateEventAdminRequest.getStateAction()) {
                 case REJECT_EVENT:
@@ -230,7 +237,6 @@ public class EventServiceImpl implements EventService {
                     event.setState(EventState.PENDING);
             }
         }
-
         if (updateEventAdminRequest.getTitle() != null) {
             event.setTitle(updateEventAdminRequest.getTitle());
         }

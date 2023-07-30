@@ -46,10 +46,14 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         if (event.getParticipantLimit() > 0) {
-            List<ParticipationRequest> allConfirmedParticipationRequestsForCurrentEvent =
-                    participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);
 
-            if (allConfirmedParticipationRequestsForCurrentEvent.size() >= event.getParticipantLimit()) {
+            /*List<ParticipationRequest> allConfirmedParticipationRequestsForCurrentEvent =
+                    participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);*/
+            int currentParticipationRequestsNumber = participationRequestRepository.countParticipationRequestByEvent_Id(eventId);
+
+
+            //if (allConfirmedParticipationRequestsForCurrentEvent.size() >= event.getParticipantLimit()) {
+            if (currentParticipationRequestsNumber >= event.getParticipantLimit()) {
                 throw new ParticipantLimitAchievedException("Уже достигнут лимит одобренных заявок на мероприятие");
             }
         }
@@ -63,9 +67,13 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                 requester,
                 RequestStatus.PENDING);
 
-        if (!event.getRequestModeration()) {
+        if (event.getParticipantLimit() == 0) {
             participationRequest.setStatus(RequestStatus.CONFIRMED);
         }
+
+/*        if (!event.getRequestModeration()) {
+            participationRequest.setStatus(RequestStatus.CONFIRMED);
+        }*/
 
         ParticipationRequest savedParticipantRequest = participationRequestRepository.save(participationRequest);
         return ParticipationRequestMapper.mapToParticipationRequestDto(savedParticipantRequest);
