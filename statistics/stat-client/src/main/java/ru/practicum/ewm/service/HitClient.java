@@ -8,8 +8,11 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.client.BaseClient;
+import ru.practicum.ewm.exception.CodingException;
 import ru.practicum.ewm.model.Hit;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +34,18 @@ public class HitClient extends BaseClient {
                                            String uris,
                                            boolean unique) {
         Map<String, Object> parameters = new HashMap<>();
+
+        try {
+            if (start != null) {
+                start = URLEncoder.encode(start, "utf-8");
+            }
+            if (end != null) {
+                end = URLEncoder.encode(end, "utf-8");
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new CodingException("Ошибка кодирования дат");
+        }
+
         parameters.put("start", start);
         parameters.put("end", end);
         parameters.put("unique", unique);

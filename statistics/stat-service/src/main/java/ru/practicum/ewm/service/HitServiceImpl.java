@@ -3,10 +3,13 @@ package ru.practicum.ewm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.ewm.dto.Stats;
+import ru.practicum.ewm.exception.CodingException;
 import ru.practicum.ewm.exception.IncorrectDateException;
 import ru.practicum.ewm.model.Hit;
 import ru.practicum.ewm.repository.HitRepository;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,15 +29,28 @@ public class HitServiceImpl implements HitService {
             boolean unique) {
         List<Stats> stats;
 
+        String decodedDateStart = null;
+        String decodedDateEnd = null;
+        try {
+            if (start != null) {
+                decodedDateStart = URLDecoder.decode(start, "utf-8");
+            }
+            if (end != null) {
+                decodedDateEnd = URLDecoder.decode(end, "utf-8");
+            }
+        } catch (UnsupportedEncodingException e) {
+            throw new CodingException("Ошибка декодирования дат");
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime dateTimeStart = null;
-        if (start != null) {
-            dateTimeStart = LocalDateTime.parse(start, formatter);
-        }
         LocalDateTime dateTimeEnd = null;
-        if (end != null) {
-            dateTimeEnd = LocalDateTime.parse(end, formatter);
+        if (decodedDateStart != null) {
+            dateTimeStart = LocalDateTime.parse(decodedDateStart, formatter);
+        }
+        if (decodedDateEnd != null) {
+            dateTimeEnd = LocalDateTime.parse(decodedDateEnd, formatter);
         }
 
         checkIfDatesAreNotCorrect(dateTimeStart, dateTimeEnd);

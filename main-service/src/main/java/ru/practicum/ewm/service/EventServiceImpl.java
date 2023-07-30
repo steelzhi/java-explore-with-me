@@ -11,10 +11,7 @@ import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.RequestStatus;
-import ru.practicum.ewm.exception.CanceledEventException;
-import ru.practicum.ewm.exception.EventNotFoundException;
-import ru.practicum.ewm.exception.IncorrectEventRequestException;
-import ru.practicum.ewm.exception.PatchRestrictionException;
+import ru.practicum.ewm.exception.*;
 import ru.practicum.ewm.mapper.EventMapper;
 import ru.practicum.ewm.model.*;
 import ru.practicum.ewm.repository.CategoryRepository;
@@ -23,6 +20,8 @@ import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -282,7 +281,7 @@ public class EventServiceImpl implements EventService {
             startTime = now;
         }
         LocalDateTime endTime = null;
-        if (rangeStart != null) {
+        if (rangeEnd != null) {
             endTime = LocalDateTime.parse(rangeEnd, formatter);
         }
 
@@ -340,9 +339,24 @@ public class EventServiceImpl implements EventService {
 
             String[] urisArray = new String[urisList.size()];
             urisList.toArray(urisArray);
+
+            String encodedDateStart = null;
+            String encodedDateEnd = null;
+
+            try {
+                if (rangeStart != null) {
+                    encodedDateStart = URLEncoder.encode(rangeStart, "utf-8");
+                }
+                if (rangeEnd != null) {
+                    encodedDateEnd = URLEncoder.encode(rangeEnd, "utf-8");
+                }
+            } catch (UnsupportedEncodingException e) {
+                throw new CodingException("Ошибка кодирования дат");
+            }
+
             ResponseEntity<Object> statsEntity = eventClient.getStats(
-                    null,
-                    null,
+                    encodedDateStart,
+                    encodedDateEnd,
                     urisArray,
                     false);
 
