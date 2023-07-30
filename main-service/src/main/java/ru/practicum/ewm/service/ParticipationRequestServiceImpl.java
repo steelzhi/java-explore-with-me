@@ -68,7 +68,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         ParticipationRequest savedParticipantRequest = participationRequestRepository.save(participationRequest);
-        ParticipationRequestDto participationRequestDto = ParticipationRequestMapper.mapToParticipationRequestDto(savedParticipantRequest);
         return ParticipationRequestMapper.mapToParticipationRequestDto(savedParticipantRequest);
     }
 
@@ -91,10 +90,9 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new ParticipationRequestNotFoundException("Запрос на участие с id = " + requestId + " от пользователя с id = " + userId + " не найден");
         }
 
-        ParticipationRequestDto participationRequestDto = ParticipationRequestMapper.mapToParticipationRequestDto(participationRequest);
         participationRequest.setStatus(RequestStatus.CANCELED);
-        participationRequestRepository.save(participationRequest);
-        return participationRequestDto;
+        ParticipationRequest patchedParticipationRequest = participationRequestRepository.save(participationRequest);
+        return ParticipationRequestMapper.mapToParticipationRequestDto(patchedParticipationRequest);
     }
 
     @Override
@@ -116,7 +114,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         Event event = eventRepository.findById(eventId).get();
-        List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId);
+        //List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId);
+        List<ParticipationRequest> participationRequests = new ArrayList<>();
+        if (userId == event.getInitiator().getId()) {
+            participationRequests = participationRequestRepository.getParticipationRequestByEvent_Id(eventId);
+        }
 
         for (ParticipationRequest participationRequest : participationRequests) {
             if (participationRequest.getStatus() != RequestStatus.PENDING) {
@@ -127,7 +129,14 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         List<ParticipationRequestDto> confirmedParticipationRequestDtos = new ArrayList<>();
         List<ParticipationRequestDto> rejectedParticipationRequestDtos = new ArrayList<>();
 
-        if (event.getRequestModeration() == false) {
+        if (eventRequestStatusUpdateRequest.getStatus() == RequestStatus.REJECTED) {
+            for (ParticipationRequest participationRequest : participationRequests) {
+                participationRequest.setStatus(RequestStatus.REJECTED);
+                ParticipationRequestDto rejectedParticipationRequestDto =
+                        ParticipationRequestMapper.mapToParticipationRequestDto(participationRequest);
+                rejectedParticipationRequestDtos.add(rejectedParticipationRequestDto);
+            }
+        } else if (event.getRequestModeration() == false || eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
             if (event.getParticipantLimit() > 0) {
                 List<ParticipationRequest> allConfirmedParticipationRequestsForCurrentEvent =
                         participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);

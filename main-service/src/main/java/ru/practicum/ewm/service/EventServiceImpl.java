@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.client.EventClient;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
+import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.RequestStatus;
 import ru.practicum.ewm.exception.CanceledEventException;
 import ru.practicum.ewm.exception.EventNotFoundException;
@@ -20,7 +21,6 @@ import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
-import ru.practicum.ewm.enums.EventState;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
@@ -67,6 +67,7 @@ public class EventServiceImpl implements EventService {
             events = pagedList.getContent();
         }
 
+        List<EventShortDto> eventShortDto = EventMapper.mapToEventShortDto(events);
         return EventMapper.mapToEventShortDto(events);
     }
 
@@ -106,7 +107,12 @@ public class EventServiceImpl implements EventService {
             event.setParticipantLimit(updateEventUserRequest.getParticipantLimit());
         }
 
-        event.setState(EventState.PENDING);
+        if (updateEventUserRequest.getStateAction() == EventState.CANCEL_REVIEW) {
+            event.setState(EventState.CANCELED);
+        } else {
+            event.setState(EventState.PENDING);
+        }
+
         if (updateEventUserRequest.getTitle() != null) {
             event.setTitle(updateEventUserRequest.getTitle());
         }
@@ -204,10 +210,12 @@ public class EventServiceImpl implements EventService {
         if (updateEventAdminRequest.getLocation() != null) {
             event.setLocation(updateEventAdminRequest.getLocation());
         }
+        event.setPaid(updateEventAdminRequest.isPaid());
         if (updateEventAdminRequest.getParticipantLimit() != event.getParticipantLimit()
                 && updateEventAdminRequest.getParticipantLimit() != 0) {
             event.setParticipantLimit(updateEventAdminRequest.getParticipantLimit());
         }
+        event.setRequestModeration(updateEventAdminRequest.isRequestModeration());
 
         if (updateEventAdminRequest.getStateAction() != null) {
             switch (updateEventAdminRequest.getStateAction()) {

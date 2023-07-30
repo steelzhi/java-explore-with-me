@@ -59,7 +59,6 @@ public class CompilationServiceImpl implements CompilationService {
         List<Event> events = new ArrayList<>();
         if (updateCompilationRequest.getEvents() != null) {
            // events = eventRepository.findAllById(updateCompilationRequest.getEvents());
-            List<Event> all = eventRepository.findAll();
             events = eventRepository.getAllEventsByIdInAndState(updateCompilationRequest.getEvents(), EventState.PUBLISHED);
         }
         Compilation currentCompilation = compilationRepository.getReferenceById(id);

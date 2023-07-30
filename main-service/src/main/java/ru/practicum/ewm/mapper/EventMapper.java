@@ -19,7 +19,7 @@ public class EventMapper {
         Event event = null;
         if (newEventDto != null) {
             Boolean isPaid;
-            if (newEventDto.getPaid() == null) {
+            if (newEventDto.getPaid() == null || newEventDto.getPaid() == false) {
                 isPaid = false;
             } else {
                 isPaid = true;
@@ -33,7 +33,7 @@ public class EventMapper {
             }
 
             Boolean requestModeration;
-            if (newEventDto.getRequestModeration() == null) {
+            if (newEventDto.getRequestModeration() == null || newEventDto.getRequestModeration() == true) {
                 requestModeration = true;
             } else {
                 requestModeration = false;
