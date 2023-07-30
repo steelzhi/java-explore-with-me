@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.dto.NewCategoryDto;
 import ru.practicum.ewm.service.CategoryService;
-import ru.practicum.ewm.util.ControllerParamChecker;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -22,8 +21,6 @@ public class CategoryController {
         return categoryService.postCategory(newCategoryDto);
     }
 
-
-    // после создания событий нужно добавить проверку, что с удаляемой категорией не связано ни одного события!
     @DeleteMapping("/admin/categories/{catId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCategory(@PathVariable Long catId) {
@@ -48,6 +45,4 @@ public class CategoryController {
     public CategoryDto getCategory(@PathVariable Long catId) {
         return categoryService.getCategory(catId);
     }
-
-
 }

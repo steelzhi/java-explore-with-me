@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class CategoryDto {
     private long id;
-    private String name;    
+    private String name;
 }

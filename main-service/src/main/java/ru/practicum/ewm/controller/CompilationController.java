@@ -3,11 +3,11 @@ package ru.practicum.ewm.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.dto.*;
-import ru.practicum.ewm.service.CategoryService;
+import ru.practicum.ewm.dto.CompilationDto;
+import ru.practicum.ewm.dto.NewCompilationDto;
+import ru.practicum.ewm.dto.UpdateCompilationRequest;
 import ru.practicum.ewm.service.CompilationService;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -47,6 +47,4 @@ public class CompilationController {
     public CompilationDto getCompilation(@PathVariable long compId) {
         return compilationService.getCompilation(compId);
     }
-
-
 }

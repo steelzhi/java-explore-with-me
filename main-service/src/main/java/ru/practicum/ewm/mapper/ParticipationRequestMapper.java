@@ -1,14 +1,8 @@
 package ru.practicum.ewm.mapper;
 
-import ru.practicum.ewm.dto.CategoryDto;
-import ru.practicum.ewm.dto.NewCategoryDto;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
-import ru.practicum.ewm.model.Category;
-import ru.practicum.ewm.model.Event;
 import ru.practicum.ewm.model.ParticipationRequest;
-import ru.practicum.ewm.model.User;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +24,8 @@ public class ParticipationRequestMapper {
         return participationRequestDto;
     }
 
-    public static List<ParticipationRequestDto> mapToParticipationRequestDto(List<ParticipationRequest> participationRequests) {
+    public static List<ParticipationRequestDto> mapToParticipationRequestDto(
+            List<ParticipationRequest> participationRequests) {
         List<ParticipationRequestDto> participationRequestDtos = new ArrayList<>();
         if (participationRequests != null) {
             for (ParticipationRequest participationRequest : participationRequests) {
@@ -39,6 +34,4 @@ public class ParticipationRequestMapper {
         }
         return participationRequestDtos;
     }
-
-
 }

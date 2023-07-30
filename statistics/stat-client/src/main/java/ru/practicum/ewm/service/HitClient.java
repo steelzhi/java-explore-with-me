@@ -64,5 +64,4 @@ public class HitClient extends BaseClient {
     public ResponseEntity<Object> postHit(Hit hit) {
         return post("/hit", hit);
     }
-
 }

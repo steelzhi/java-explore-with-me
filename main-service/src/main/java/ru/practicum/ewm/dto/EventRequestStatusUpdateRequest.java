@@ -15,7 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class EventRequestStatusUpdateRequest {
-
     private List<Integer> requestIds;
     private RequestStatus status;
 }

@@ -62,11 +62,11 @@ public class CompilationServiceImpl implements CompilationService {
         checkIfCompilationParamsAreNotCorrect(updateCompilationRequest);
         List<Event> events = new ArrayList<>();
         if (updateCompilationRequest.getEvents() != null) {
-           // events = eventRepository.findAllById(updateCompilationRequest.getEvents());
-            events = eventRepository.getAllEventsByIdInAndState(updateCompilationRequest.getEvents(), EventState.PUBLISHED);
+            events = eventRepository.getAllEventsByIdInAndState(
+                    updateCompilationRequest.getEvents(), EventState.PUBLISHED);
         }
         Compilation currentCompilation = compilationRepository.getReferenceById(id);
-        Compilation patchedCompilation = patchCompilation(id, currentCompilation, updateCompilationRequest, events);
+        Compilation patchedCompilation = patchCompilation(currentCompilation, updateCompilationRequest, events);
 
         Compilation savedCompilation = compilationRepository.save(patchedCompilation);
         List<EventShortDto> eventShortDtos = EventMapper.mapToEventShortDto(events);
@@ -121,12 +121,15 @@ public class CompilationServiceImpl implements CompilationService {
 
     private void checkIfCompilationParamsAreNotCorrect(UpdateCompilationRequest updateCompilationRequest) {
         if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()
-                && (updateCompilationRequest.getTitle().length() < 1 || updateCompilationRequest.getTitle().length() > 50)) {
+                && (updateCompilationRequest.getTitle().length() < 1
+                || updateCompilationRequest.getTitle().length() > 50)) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
     }
 
-    private Compilation patchCompilation(long id, Compilation currentcompilation, UpdateCompilationRequest updateCompilationRequest, List<Event> events) {
+    private Compilation patchCompilation(Compilation currentcompilation,
+                                         UpdateCompilationRequest updateCompilationRequest,
+                                         List<Event> events) {
         Compilation compilation = currentcompilation;
 
         if (events != null) {

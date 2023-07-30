@@ -2,10 +2,7 @@ package ru.practicum.ewm.mapper;
 
 import ru.practicum.ewm.dto.CategoryDto;
 import ru.practicum.ewm.dto.NewCategoryDto;
-import ru.practicum.ewm.dto.UserDto;
-import ru.practicum.ewm.dto.UserShortDto;
 import ru.practicum.ewm.model.Category;
-import ru.practicum.ewm.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

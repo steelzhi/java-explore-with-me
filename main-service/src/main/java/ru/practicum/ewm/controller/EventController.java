@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
-import ru.practicum.ewm.service.EventService;
 import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.EnumSet;
@@ -67,17 +67,28 @@ public class EventController {
 
     @GetMapping("/events")
     @ResponseStatus(HttpStatus.OK)
-    public List<EventShortDto> getPublishedEvents(@RequestParam(required = false) String text,
-                                                  @RequestParam(required = false) Long[] categories,
-                                                  @RequestParam(required = false) Boolean paid,
-                                                  @RequestParam(required = false) String rangeStart,
-                                                  @RequestParam(required = false) String rangeEnd,
-                                                  @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
-                                                  @RequestParam(required = false) EventSort sort,
-                                                  @RequestParam(required = false, defaultValue = "0") Integer from,
-                                                  @RequestParam(required = false, defaultValue = "10") Integer size,
-                                                  HttpServletRequest request) {
-        return eventService.getPublishedEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request);
+    public List<EventShortDto> getPublishedEvents(
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) Long[] categories,
+            @RequestParam(required = false) Boolean paid,
+            @RequestParam(required = false) String rangeStart,
+            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(required = false, defaultValue = "false") boolean onlyAvailable,
+            @RequestParam(required = false) EventSort sort,
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            HttpServletRequest request) {
+        return eventService.getPublishedEvents(
+                text,
+                categories,
+                paid,
+                rangeStart,
+                rangeEnd,
+                onlyAvailable,
+                sort,
+                from,
+                size,
+                request);
     }
 
     @GetMapping("/events/{id}")

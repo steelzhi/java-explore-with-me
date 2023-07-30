@@ -192,7 +192,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleUnacceptableEventStatusForParticipation(final UnacceptableEventStatusForParticipationException e) {
+    public ApiError handleUnacceptableEventStatusForParticipation(
+            final UnacceptableEventStatusForParticipationException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
                 "Нельзя принять участие в еще не опубликованном событии",
@@ -219,5 +220,4 @@ public class ErrorHandler {
                 HttpStatus.NOT_FOUND,
                 LocalDateTime.now());
     }
-
 }

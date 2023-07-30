@@ -17,7 +17,7 @@ import java.util.Map;
 public class EventClient extends BaseClient {
 
     @Autowired
-    public EventClient(@Value("http://stats-server:9090") String serverUrl, RestTemplateBuilder builder) {
+    public EventClient(@Value("${stat-service.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -68,5 +68,4 @@ public class EventClient extends BaseClient {
     public ResponseEntity<Object> postHit(Hit hit) {
         return post("/hit", hit);
     }
-
 }

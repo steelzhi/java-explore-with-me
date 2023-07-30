@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
@@ -24,6 +23,5 @@ public class Category {
     private long id;
 
     @NotBlank
-    //@Length(min = 1, max = 50)
     private String name;
 }

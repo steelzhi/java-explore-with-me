@@ -67,19 +67,23 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userDto.getName().length() < 2 || userDto.getName().length() > 250) {
-            throw new IncorrectUserRequestException("Попытка добавления пользователя со слишком коротким или слишком длинным именем");
+            throw new IncorrectUserRequestException(
+                    "Попытка добавления пользователя со слишком коротким или слишком длинным именем");
         }
 
         if (userDto.getEmail().length() < 6 || userDto.getEmail().length() > 254) {
-            throw new IncorrectUserRequestException("Попытка добавления пользователя со слишком коротким или слишком длинным email");
+            throw new IncorrectUserRequestException(
+                    "Попытка добавления пользователя со слишком коротким или слишком длинным email");
         }
 
         if (userDto.getEmail().split("@")[0].length() > 64) {
-            throw new IncorrectUserRequestException("Попытка добавления пользователя email длиной > 64 символов перед значком @ ");
+            throw new IncorrectUserRequestException(
+                    "Попытка добавления пользователя email длиной > 64 символов перед значком @ ");
         }
 
         if (userDto.getEmail().split("@")[1].split("\\.")[0].length() > 63) {
-            throw new IncorrectUserRequestException("Попытка добавления пользователя email длиной > 63 символов после значка @ ");
+            throw new IncorrectUserRequestException(
+                    "Попытка добавления пользователя email длиной > 63 символов после значка @ ");
         }
     }
 

@@ -1,11 +1,11 @@
 package ru.practicum.ewm.mapper;
 
-import ru.practicum.ewm.dto.*;
-import ru.practicum.ewm.model.Category;
+import ru.practicum.ewm.dto.CompilationDto;
+import ru.practicum.ewm.dto.EventShortDto;
+import ru.practicum.ewm.dto.NewCompilationDto;
 import ru.practicum.ewm.model.Compilation;
 import ru.practicum.ewm.model.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CompilationMapper {
@@ -36,7 +36,4 @@ public class CompilationMapper {
         }
         return compilationDto;
     }
-
-
-
 }

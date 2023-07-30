@@ -14,7 +14,10 @@ import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.enums.RequestStatus;
 import ru.practicum.ewm.exception.*;
 import ru.practicum.ewm.mapper.EventMapper;
-import ru.practicum.ewm.model.*;
+import ru.practicum.ewm.model.Category;
+import ru.practicum.ewm.model.Event;
+import ru.practicum.ewm.model.Hit;
+import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.CategoryRepository;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.ParticipationRequestRepository;
@@ -69,7 +72,6 @@ public class EventServiceImpl implements EventService {
             events = pagedList.getContent();
         }
 
-        List<EventShortDto> eventShortDto = EventMapper.mapToEventShortDto(events);
         return EventMapper.mapToEventShortDto(events);
     }
 
@@ -172,7 +174,8 @@ public class EventServiceImpl implements EventService {
             categories = new Long[allCategoriesIds.size()];
             allCategoriesIds.toArray(categories);
         }
-        Page<Event> pagedList = eventRepository.searchInitiatorEvents(users, states, categories, startTime, endTime, page);
+        Page<Event> pagedList =
+                eventRepository.searchInitiatorEvents(users, states, categories, startTime, endTime, page);
 
         if (pagedList != null) {
             events = pagedList.getContent();
@@ -295,7 +298,14 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
-        Page<Event> pagedList = eventRepository.searchPublishedEvents(categories, paid, startTime, endTime, EventState.PUBLISHED, text, page);
+        Page<Event> pagedList = eventRepository.searchPublishedEvents(
+                categories,
+                paid,
+                startTime,
+                endTime,
+                EventState.PUBLISHED,
+                text,
+                page);
 
         if (pagedList != null) {
             events = pagedList.getContent();
@@ -304,7 +314,9 @@ public class EventServiceImpl implements EventService {
         List<EventShortDto> eventShortDtos = new ArrayList<>();
         for (Event event : events) {
             int currentNumberOfParticipants =
-                    participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+                    participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(
+                            event.getId(),
+                            RequestStatus.CONFIRMED);
 
             if (onlyAvailable && event.getParticipantLimit() <= currentNumberOfParticipants) {
                 break;
@@ -368,7 +380,8 @@ public class EventServiceImpl implements EventService {
                     urisArray,
                     false);
 
-            ArrayList<LinkedHashMap<String, Object>> body = (ArrayList<LinkedHashMap<String, Object>>) statsEntity.getBody();
+            ArrayList<LinkedHashMap<String, Object>> body =
+                    (ArrayList<LinkedHashMap<String, Object>>) statsEntity.getBody();
             if (!body.isEmpty()) {
                 for (int i = 0; i < body.size(); i++) {
                     for (EventShortDto eventShortDto : eventShortDtos) {
@@ -404,7 +417,8 @@ public class EventServiceImpl implements EventService {
                     urisArray,
                     true);
 
-            ArrayList<LinkedHashMap<String, Object>> body = (ArrayList<LinkedHashMap<String, Object>>) statsEntity.getBody();
+            ArrayList<LinkedHashMap<String, Object>> body =
+                    (ArrayList<LinkedHashMap<String, Object>>) statsEntity.getBody();
             if (!body.isEmpty()) {
                 eventFullDto.setViews((int) body.get(0).get("hits"));
             }
@@ -435,7 +449,8 @@ public class EventServiceImpl implements EventService {
 
     private void checkIfEventTimeRestrictsToPatch(LocalDateTime eventDateTime) {
         if (eventDateTime.minusHours(1).isBefore(LocalDateTime.now())) {
-            throw new IncorrectEventRequestException("Обновленное время начала события не можем быть меньше часа от времени публикации");
+            throw new IncorrectEventRequestException(
+                    "Обновленное время начала события не можем быть меньше часа от времени публикации");
         }
     }
 
@@ -452,7 +467,8 @@ public class EventServiceImpl implements EventService {
 
     private void checkIfEventParamsAreNotCorrect(NewEventDto newEventDto) {
         if (newEventDto.getEventDate().minusHours(2).isBefore(LocalDateTime.now())) {
-            throw new IncorrectEventRequestException("Дата начала события не может быть раньше, чем через 2 часа от настоящего момента");
+            throw new IncorrectEventRequestException(
+                    "Дата начала события не может быть раньше, чем через 2 часа от настоящего момента");
         }
 
         if (newEventDto.getAnnotation() == null || newEventDto.getAnnotation().isBlank()) {
@@ -460,7 +476,8 @@ public class EventServiceImpl implements EventService {
         }
 
         if (newEventDto.getAnnotation().length() < 20 || newEventDto.getAnnotation().length() > 2000) {
-            throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
         }
 
         if (newEventDto.getDescription() == null || newEventDto.getDescription().isBlank()) {
@@ -468,7 +485,8 @@ public class EventServiceImpl implements EventService {
         }
 
         if (newEventDto.getDescription().length() < 20 || newEventDto.getDescription().length() > 7000) {
-            throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
         if (newEventDto.getTitle() == null || newEventDto.getTitle().isBlank()) {
@@ -476,24 +494,32 @@ public class EventServiceImpl implements EventService {
         }
 
         if (newEventDto.getTitle().length() < 3 || newEventDto.getTitle().length() > 120) {
-            throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
     }
 
     private void checkIfEventParamsAreNotCorrect(UpdateEventUserRequest updateEventUserRequest) {
         if (updateEventUserRequest.getAnnotation() != null
-                && (updateEventUserRequest.getAnnotation().length() < 20 || updateEventUserRequest.getAnnotation().length() > 2000)) {
-            throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
+                && (updateEventUserRequest.getAnnotation().length() < 20
+                || updateEventUserRequest.getAnnotation().length() > 2000)) {
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления краткого описания со слишком маленьким или слишком большим количеством " +
+                            "символов");
         }
 
         if (updateEventUserRequest.getDescription() != null
-                && (updateEventUserRequest.getDescription().length() < 20 || updateEventUserRequest.getDescription().length() > 7000)) {
-            throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
+                && (updateEventUserRequest.getDescription().length() < 20
+                || updateEventUserRequest.getDescription().length() > 7000)) {
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
         if (updateEventUserRequest.getTitle() != null
-                && (updateEventUserRequest.getTitle().length() < 3 || updateEventUserRequest.getTitle().length() > 120)) {
-            throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+                && (updateEventUserRequest.getTitle().length() < 3
+                || updateEventUserRequest.getTitle().length() > 120)) {
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
 
         if (updateEventUserRequest.getEventDate() != null
@@ -505,18 +531,25 @@ public class EventServiceImpl implements EventService {
 
     private void checkIfEventParamsAreNotCorrect(UpdateEventAdminRequest updateEventAdminRequest) {
         if (updateEventAdminRequest.getAnnotation() != null
-                && (updateEventAdminRequest.getAnnotation().length() < 20 || updateEventAdminRequest.getAnnotation().length() > 2000)) {
-            throw new IncorrectEventRequestException("Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
+                && (updateEventAdminRequest.getAnnotation().length() < 20
+                || updateEventAdminRequest.getAnnotation().length() > 2000)) {
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления краткого описания со слишком маленьким или слишком большим количество " +
+                            "символов");
         }
 
         if (updateEventAdminRequest.getDescription() != null
-                && (updateEventAdminRequest.getDescription().length() < 20 || updateEventAdminRequest.getDescription().length() > 7000)) {
-            throw new IncorrectEventRequestException("Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
+                && (updateEventAdminRequest.getDescription().length() < 20
+                || updateEventAdminRequest.getDescription().length() > 7000)) {
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
         if (updateEventAdminRequest.getTitle() != null
-                && (updateEventAdminRequest.getTitle().length() < 3 || updateEventAdminRequest.getTitle().length() > 120)) {
-            throw new IncorrectEventRequestException("Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
+                && (updateEventAdminRequest.getTitle().length() < 3
+                || updateEventAdminRequest.getTitle().length() > 120)) {
+            throw new IncorrectEventRequestException(
+                    "Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
     }
 
@@ -540,5 +573,4 @@ public class EventServiceImpl implements EventService {
             throw new EventNotFoundException("Информация о событии не найдена");
         }
     }
-
 }

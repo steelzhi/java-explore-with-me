@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.service.UserService;
-import ru.practicum.ewm.util.ControllerParamChecker;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;

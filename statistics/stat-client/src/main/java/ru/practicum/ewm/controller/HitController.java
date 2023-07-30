@@ -25,7 +25,6 @@ public class HitController {
         return hitClient.getStats(start, end, uris, unique);
     }
 
-
     @PostMapping("/hit")
     public ResponseEntity<Object> postHit(@RequestBody Hit hit) {
         return hitClient.postHit(hit);

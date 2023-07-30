@@ -19,6 +19,4 @@ public class ErrorHandler {
                 HttpStatus.BAD_REQUEST,
                 LocalDateTime.now());
     }
-
-
 }

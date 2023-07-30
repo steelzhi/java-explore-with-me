@@ -5,3 +5,4 @@ public class CodingException extends RuntimeException {
         super(message);
     }
 }
+

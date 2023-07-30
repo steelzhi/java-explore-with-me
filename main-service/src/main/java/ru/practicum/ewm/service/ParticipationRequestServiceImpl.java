@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
+import ru.practicum.ewm.enums.EventState;
+import ru.practicum.ewm.enums.RequestStatus;
 import ru.practicum.ewm.exception.*;
 import ru.practicum.ewm.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.model.Event;
@@ -14,8 +16,6 @@ import ru.practicum.ewm.model.User;
 import ru.practicum.ewm.repository.EventRepository;
 import ru.practicum.ewm.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.repository.UserRepository;
-import ru.practicum.ewm.enums.EventState;
-import ru.practicum.ewm.enums.RequestStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,25 +36,24 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
         Event event = eventRepository.findById(eventId).get();
         if (event.getInitiator().getId() == userId) {
-            throw new RequesterMatchesInitiatorException("Инициатор события не может участвовать в собственном событии");
+            throw new RequesterMatchesInitiatorException(
+                    "Инициатор события не может участвовать в собственном событии");
         }
 
         if (event.getState() != EventState.PUBLISHED) {
-            throw new UnacceptableEventStatusForParticipationException("Нельзя принять участие в еще не опубликованном событии");
+            throw new UnacceptableEventStatusForParticipationException(
+                    "Нельзя принять участие в еще не опубликованном событии");
         }
 
-        if (!participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId).isEmpty()) {
-            throw new DuplicateParticipationRequestException("Нельзя отправлять повторный запрос от того же пользователя на то же событие");
+        if (!participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId)
+                .isEmpty()) {
+            throw new DuplicateParticipationRequestException(
+                    "Нельзя отправлять повторный запрос от того же пользователя на то же событие");
         }
 
         if (event.getParticipantLimit() > 0) {
-
-            /*List<ParticipationRequest> allConfirmedParticipationRequestsForCurrentEvent =
-                    participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);*/
-            int currentParticipationRequestsNumber = participationRequestRepository.countParticipationRequestByEvent_Id(eventId);
-
-
-            //if (allConfirmedParticipationRequestsForCurrentEvent.size() >= event.getParticipantLimit()) {
+            int currentParticipationRequestsNumber =
+                    participationRequestRepository.countParticipationRequestByEvent_Id(eventId);
             if (currentParticipationRequestsNumber >= event.getParticipantLimit()) {
                 throw new ParticipantLimitAchievedException("Уже достигнут лимит одобренных заявок на мероприятие");
             }
@@ -73,10 +72,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             participationRequest.setStatus(RequestStatus.CONFIRMED);
         }
 
-/*        if (!event.getRequestModeration()) {
-            participationRequest.setStatus(RequestStatus.CONFIRMED);
-        }*/
-
         ParticipationRequest savedParticipantRequest = participationRequestRepository.save(participationRequest);
         return ParticipationRequestMapper.mapToParticipationRequestDto(savedParticipantRequest);
     }
@@ -88,8 +83,10 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             throw new UserNotFoundException("Пользователь с id = " + userId + " не найден");
         }
 
-        List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByRequester_Id(userId);
-        List<ParticipationRequestDto> participationRequestDtos = ParticipationRequestMapper.mapToParticipationRequestDto(participationRequests);
+        List<ParticipationRequest> participationRequests =
+                participationRequestRepository.getParticipationRequestByRequester_Id(userId);
+        List<ParticipationRequestDto> participationRequestDtos =
+                ParticipationRequestMapper.mapToParticipationRequestDto(participationRequests);
 
         return participationRequestDtos;
     }
@@ -97,9 +94,11 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public ParticipationRequestDto patchParticipationRequest(long userId, long requestId) {
-        ParticipationRequest participationRequest = participationRequestRepository.getParticipationRequestByRequester_IdAndId(userId, requestId);
+        ParticipationRequest participationRequest =
+                participationRequestRepository.getParticipationRequestByRequester_IdAndId(userId, requestId);
         if (participationRequest == null) {
-            throw new ParticipationRequestNotFoundException("Запрос на участие с id = " + requestId + " от пользователя с id = " + userId + " не найден");
+            throw new ParticipationRequestNotFoundException(
+                    "Запрос на участие с id = " + requestId + " от пользователя с id = " + userId + " не найден");
         }
 
         participationRequest.setStatus(RequestStatus.CANCELED);
@@ -110,8 +109,10 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public List<ParticipationRequestDto> getParticipationRequestByUserInParticularEvent(long userId, long eventId) {
-        List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByEvent_Initiator_IdAndEvent_Id(userId, eventId);
-        List<ParticipationRequestDto> participationRequestDtos = ParticipationRequestMapper.mapToParticipationRequestDto(participationRequests);
+        List<ParticipationRequest> participationRequests =
+                participationRequestRepository.getParticipationRequestByEvent_Initiator_IdAndEvent_Id(userId, eventId);
+        List<ParticipationRequestDto> participationRequestDtos =
+                ParticipationRequestMapper.mapToParticipationRequestDto(participationRequests);
 
         return participationRequestDtos;
     }
@@ -128,7 +129,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
         }
 
         Event event = eventRepository.findById(eventId).get();
-        //List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByRequester_IdAndEvent_Id(userId, eventId);
         List<ParticipationRequest> participationRequests = new ArrayList<>();
         if (userId == event.getInitiator().getId()) {
             participationRequests = participationRequestRepository.getParticipationRequestByEvent_Id(eventId);
@@ -136,7 +136,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
         for (ParticipationRequest participationRequest : participationRequests) {
             if (participationRequest.getStatus() != RequestStatus.PENDING) {
-                throw new ViolationParticipationRequestStatusException("Можно изменять статус только у заявок, находящихся в состоянии ожидания");
+                throw new ViolationParticipationRequestStatusException(
+                        "Можно изменять статус только у заявок, находящихся в состоянии ожидания");
             }
         }
 
@@ -150,10 +151,12 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                         ParticipationRequestMapper.mapToParticipationRequestDto(participationRequest);
                 rejectedParticipationRequestDtos.add(rejectedParticipationRequestDto);
             }
-        } else if (event.getRequestModeration() == false || eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
+        } else if (event.getRequestModeration() == false
+                || eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
             if (event.getParticipantLimit() > 0) {
                 int currentNumberOfParticipants =
-                        participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);
+                        participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(
+                                eventId, RequestStatus.CONFIRMED);
                 int participantLimitForEvent = event.getParticipantLimit();
 
                 if (currentNumberOfParticipants >= participantLimitForEvent) {

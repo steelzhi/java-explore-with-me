@@ -1,11 +1,8 @@
 package ru.practicum.ewm.service;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
-import ru.practicum.ewm.dto.UserDto;
 
 import java.util.List;
 
