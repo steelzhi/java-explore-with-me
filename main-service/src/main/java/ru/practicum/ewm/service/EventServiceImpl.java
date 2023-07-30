@@ -558,6 +558,7 @@ public class EventServiceImpl implements EventService {
             Integer.parseInt(text);
             throw new IncorrectEventRequestException("Текст не может быть числом");
         } catch (NumberFormatException e) {
+            return; // заглушка для соблюдения условий Checkstyle на Github
         }
     }
 
