@@ -17,7 +17,7 @@ import java.util.Map;
 public class EventClient extends BaseClient {
 
     @Autowired
-    public EventClient(@Value("http://localhost:9090") String serverUrl, RestTemplateBuilder builder) {
+    public EventClient(@Value("http://stats-server:9090") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
