@@ -33,6 +33,7 @@ public class CategoryServiceImpl implements CategoryService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CategoryDto postCategory(NewCategoryDto newCategoryDto) {
         checkIfCategoryParamsAreNotCorrect(newCategoryDto);
         checkCategoryName(newCategoryDto.getName());
@@ -43,6 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long catId) {
         if (eventRepository.countAllByCategory_Id(catId) > 0) {
             throw new RemovingCategoryException("Нельзя удалить данную категорию, т.к. к ней уже привязаны события");
@@ -52,6 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDto patchCategory(Long catId, CategoryDto categoryDto) {
         checkIfCategoryParamsAreNotCorrect(categoryDto);
 
@@ -72,6 +75,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public List<CategoryDto> getCategories(Integer from, Integer size) {
         List<Category> categories = new ArrayList<>();
 

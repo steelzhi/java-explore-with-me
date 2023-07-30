@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.client.EventClient;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventSort;
@@ -41,6 +42,7 @@ public class EventServiceImpl implements EventService {
 
 
     @Override
+    @Transactional
     public EventFullDto postEvent(long userId, NewEventDto newEventDto) {
         checkIfEventParamsAreNotCorrect(newEventDto);
 
@@ -57,6 +59,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public List<EventShortDto> getEventsAddedByUser(long userId, Integer from, Integer size) {
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
@@ -71,6 +74,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto getEventAddedByUser(long userId, long eventId) {
         Event event = eventRepository.getEventByInitiator_IdAndId(userId, eventId);
         checkIfEventExists(event);
@@ -78,6 +82,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto patchEventByUser(long userId, long eventId, UpdateEventUserRequest updateEventUserRequest) {
         checkIfEventParamsAreNotCorrect(updateEventUserRequest);
 
@@ -125,6 +130,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public List<EventFullDto> searchEvents(
             Long[] users,
             EnumSet<EventState> states,
@@ -185,6 +191,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto patchEventByAdmin(long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         checkIfEventParamsAreNotCorrect(updateEventAdminRequest);
 
@@ -245,6 +252,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public List<EventShortDto> getPublishedEvents(
             String text,
             Long[] categories,
@@ -295,15 +303,15 @@ public class EventServiceImpl implements EventService {
 
         List<EventShortDto> eventShortDtos = new ArrayList<>();
         for (Event event : events) {
-            List<ParticipationRequest> onlyConfirmedParticipationRequests =
-                    participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
+            int currentNumberOfParticipants =
+                    participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(event.getId(), RequestStatus.CONFIRMED);
 
-            if (onlyAvailable && event.getParticipantLimit() <= onlyConfirmedParticipationRequests.size()) {
+            if (onlyAvailable && event.getParticipantLimit() <= currentNumberOfParticipants) {
                 break;
             }
 
             EventShortDto eventShortDto = EventMapper.mapToEventShortDto(event);
-            eventShortDto.setConfirmedRequests(onlyConfirmedParticipationRequests.size());
+            eventShortDto.setConfirmedRequests(currentNumberOfParticipants);
             eventShortDtos.add(eventShortDto);
         }
 
@@ -376,6 +384,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public EventFullDto getPublishedEvent(long id, HttpServletRequest request) {
         Event event = eventRepository.findById(id).get();
         checkIfEventIsNotPublished(event);

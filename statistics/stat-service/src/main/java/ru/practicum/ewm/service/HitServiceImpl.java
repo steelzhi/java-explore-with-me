@@ -2,6 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.Stats;
 import ru.practicum.ewm.exception.CodingException;
 import ru.practicum.ewm.exception.IncorrectDateException;
@@ -22,6 +23,7 @@ public class HitServiceImpl implements HitService {
     private final HitRepository hitRepository;
 
     @Override
+    @Transactional
     public List<Stats> getStats(
             String start,
             String end,
@@ -84,6 +86,7 @@ public class HitServiceImpl implements HitService {
     }
 
     @Override
+    @Transactional
     public Hit saveHit(Hit hit) {
         Hit savedHit = hitRepository.save(hit);
         return savedHit;

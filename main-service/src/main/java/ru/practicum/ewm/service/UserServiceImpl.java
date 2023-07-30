@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.UserDto;
 import ru.practicum.ewm.exception.DuplicateUserNameException;
 import ru.practicum.ewm.exception.IncorrectUserRequestException;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserDto postUser(UserDto userDto) {
         checkIfUserParamsAreNotCorrect(userDto);
         checkIfNameAlreadyExists(userDto);
@@ -30,6 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<UserDto> getUsers(Long[] ids, Integer from, Integer size) {
         List<User> users = new ArrayList<>();
 
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }

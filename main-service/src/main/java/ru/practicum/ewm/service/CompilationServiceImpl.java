@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.CompilationDto;
 import ru.practicum.ewm.dto.EventShortDto;
 import ru.practicum.ewm.dto.NewCompilationDto;
@@ -30,6 +31,7 @@ public class CompilationServiceImpl implements CompilationService {
     private final EventRepository eventRepository;
 
     @Override
+    @Transactional
     public CompilationDto postCompilation(NewCompilationDto newCompilationDto) {
         checkIfCompilationParamsAreNotCorrect(newCompilationDto);
         List<Event> events = new ArrayList<>();
@@ -45,6 +47,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public void deleteCompilation(long compId) {
         Optional<Compilation> compilation = compilationRepository.findById(compId);
         if (compilation.isEmpty()) {
@@ -54,6 +57,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public CompilationDto patchCompilation(long id, UpdateCompilationRequest updateCompilationRequest) {
         checkIfCompilationParamsAreNotCorrect(updateCompilationRequest);
         List<Event> events = new ArrayList<>();
@@ -71,6 +75,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         List<Compilation> compilations = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
@@ -91,6 +96,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
+    @Transactional
     public CompilationDto getCompilation(long compId) {
         Optional<Compilation> compilation = compilationRepository.findById(compId);
         if (compilation.isEmpty()) {

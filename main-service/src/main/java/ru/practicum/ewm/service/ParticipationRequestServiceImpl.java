@@ -2,6 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.ewm.dto.EventRequestStatusUpdateResult;
 import ru.practicum.ewm.dto.ParticipationRequestDto;
@@ -28,6 +29,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ParticipationRequestDto postParticipationRequest(long userId, long eventId) {
         if (eventId == 0) {
             eventId = 1;
@@ -80,6 +82,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional
     public List<ParticipationRequestDto> getParticipationRequestByUserInAllEvents(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
             throw new UserNotFoundException("Пользователь с id = " + userId + " не найден");
@@ -92,6 +95,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto patchParticipationRequest(long userId, long requestId) {
         ParticipationRequest participationRequest = participationRequestRepository.getParticipationRequestByRequester_IdAndId(userId, requestId);
         if (participationRequest == null) {
@@ -104,6 +108,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional
     public List<ParticipationRequestDto> getParticipationRequestByUserInParticularEvent(long userId, long eventId) {
         List<ParticipationRequest> participationRequests = participationRequestRepository.getParticipationRequestByEvent_Initiator_IdAndEvent_Id(userId, eventId);
         List<ParticipationRequestDto> participationRequestDtos = ParticipationRequestMapper.mapToParticipationRequestDto(participationRequests);
@@ -112,6 +117,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult patchParticipationRequestsStatuses(
             long userId,
             long eventId,
@@ -146,9 +152,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             }
         } else if (event.getRequestModeration() == false || eventRequestStatusUpdateRequest.getStatus() == RequestStatus.CONFIRMED) {
             if (event.getParticipantLimit() > 0) {
-                List<ParticipationRequest> allConfirmedParticipationRequestsForCurrentEvent =
-                        participationRequestRepository.getParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);
-                int currentNumberOfParticipants = allConfirmedParticipationRequestsForCurrentEvent.size();
+                int currentNumberOfParticipants =
+                        participationRequestRepository.countParticipationRequestByEvent_IdAndStatus(eventId, RequestStatus.CONFIRMED);
                 int participantLimitForEvent = event.getParticipantLimit();
 
                 if (currentNumberOfParticipants >= participantLimitForEvent) {
