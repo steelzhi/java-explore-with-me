@@ -21,12 +21,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
-    private final int MIN_NAME_LENGTH = 2;
-    private final int MAX_NAME_LENGTH = 250;
-    private final int MIN_EMAIL_LENGTH = 6;
-    private final int MAX_EMAIL_LENGTH = 254;
-    private final int MAX_FIRST_PART_LENGTH = 64;
-    private final int MAX_SECOND_PART_LENGTH = 63;
+    private final int MINNAME = 2;
+    private final int MAXNAME = 250;
+    private final int MINEMAIL = 6;
+    private final int MAXEMAIL = 254;
+    private final int MAXFIRST = 64;
+    private final int MAXSECOND = 63;
 
     @Override
     public UserDto postUser(UserDto userDto) {
@@ -72,22 +72,22 @@ public class UserServiceImpl implements UserService {
             throw new IncorrectUserRequestException("Попытка добавления пользователя без имени или с пустым именем");
         }
 
-        if (userDto.getName().length() < MIN_NAME_LENGTH || userDto.getName().length() > MAX_NAME_LENGTH) {
+        if (userDto.getName().length() < MINNAME || userDto.getName().length() > MAXNAME) {
             throw new IncorrectUserRequestException(
                     "Попытка добавления пользователя со слишком коротким или слишком длинным именем");
         }
 
-        if (userDto.getEmail().length() < MIN_EMAIL_LENGTH || userDto.getEmail().length() > MAX_EMAIL_LENGTH) {
+        if (userDto.getEmail().length() < MINEMAIL || userDto.getEmail().length() > MAXEMAIL) {
             throw new IncorrectUserRequestException(
                     "Попытка добавления пользователя со слишком коротким или слишком длинным email");
         }
 
-        if (userDto.getEmail().split("@")[0].length() > MAX_FIRST_PART_LENGTH) {
+        if (userDto.getEmail().split("@")[0].length() > MAXFIRST) {
             throw new IncorrectUserRequestException(
                     "Попытка добавления пользователя email длиной > 64 символов перед значком @ ");
         }
 
-        if (userDto.getEmail().split("@")[1].split("\\.")[0].length() > MAX_SECOND_PART_LENGTH) {
+        if (userDto.getEmail().split("@")[1].split("\\.")[0].length() > MAXSECOND) {
             throw new IncorrectUserRequestException(
                     "Попытка добавления пользователя email длиной > 63 символов после значка @ ");
         }

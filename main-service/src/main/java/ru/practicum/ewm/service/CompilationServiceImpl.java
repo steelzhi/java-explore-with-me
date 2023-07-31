@@ -29,8 +29,8 @@ import java.util.Optional;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
-    private final int MIN_LENGTH = 1;
-    private final int MAX_LENGTH = 50;
+    private final int MINLENGTH = 1;
+    private final int MAXLENGTH = 50;
 
     @Override
     @Transactional
@@ -116,15 +116,15 @@ public class CompilationServiceImpl implements CompilationService {
             throw new IncorrectCompilationRequestException("У подборки должен быть заголовок");
         }
 
-        if (newCompilationDto.getTitle().length() < MIN_LENGTH || newCompilationDto.getTitle().length() > MAX_LENGTH) {
+        if (newCompilationDto.getTitle().length() < MINLENGTH || newCompilationDto.getTitle().length() > MAXLENGTH) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
     }
 
     private void checkIfCompilationParamsAreNotCorrect(UpdateCompilationRequest updateCompilationRequest) {
         if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()
-                && (updateCompilationRequest.getTitle().length() < MIN_LENGTH
-                || updateCompilationRequest.getTitle().length() > MAX_LENGTH)) {
+                && (updateCompilationRequest.getTitle().length() < MINLENGTH
+                || updateCompilationRequest.getTitle().length() > MAXLENGTH)) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
     }
