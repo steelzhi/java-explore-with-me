@@ -77,7 +77,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getParticipationRequestByUserInAllEvents(long userId) {
         if (userRepository.findById(userId).isEmpty()) {
             throw new UserNotFoundException("Пользователь с id = " + userId + " не найден");
@@ -107,7 +107,7 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getParticipationRequestByUserInParticularEvent(long userId, long eventId) {
         List<ParticipationRequest> participationRequests =
                 participationRequestRepository.getParticipationRequestByEvent_Initiator_IdAndEvent_Id(userId, eventId);

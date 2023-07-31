@@ -6,7 +6,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.client.BaseClient;
 import ru.practicum.ewm.exception.CodingException;
@@ -30,7 +29,6 @@ public class HitClient extends BaseClient {
         );
     }
 
-    @Transactional
     public ResponseEntity<Object> getStats(String start,
                                            String end,
                                            String uris,
@@ -60,7 +58,6 @@ public class HitClient extends BaseClient {
         }
     }
 
-    @Transactional
     public ResponseEntity<Object> postHit(Hit hit) {
         return post("/hit", hit);
     }

@@ -29,6 +29,8 @@ import java.util.Optional;
 public class CompilationServiceImpl implements CompilationService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
+    private final int MIN_LENGTH = 1;
+    private final int MAX_LENGTH = 50;
 
     @Override
     @Transactional
@@ -75,7 +77,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         List<Compilation> compilations = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
@@ -96,7 +98,7 @@ public class CompilationServiceImpl implements CompilationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public CompilationDto getCompilation(long compId) {
         Optional<Compilation> compilation = compilationRepository.findById(compId);
         if (compilation.isEmpty()) {
@@ -114,15 +116,15 @@ public class CompilationServiceImpl implements CompilationService {
             throw new IncorrectCompilationRequestException("У подборки должен быть заголовок");
         }
 
-        if (newCompilationDto.getTitle().length() < 1 || newCompilationDto.getTitle().length() > 50) {
+        if (newCompilationDto.getTitle().length() < MIN_LENGTH || newCompilationDto.getTitle().length() > MAX_LENGTH) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
     }
 
     private void checkIfCompilationParamsAreNotCorrect(UpdateCompilationRequest updateCompilationRequest) {
         if (updateCompilationRequest.getTitle() != null && !updateCompilationRequest.getTitle().isBlank()
-                && (updateCompilationRequest.getTitle().length() < 1
-                || updateCompilationRequest.getTitle().length() > 50)) {
+                && (updateCompilationRequest.getTitle().length() < MIN_LENGTH
+                || updateCompilationRequest.getTitle().length() > MAX_LENGTH)) {
             throw new IncorrectCompilationRequestException("Некорректная длина заголовка");
         }
     }

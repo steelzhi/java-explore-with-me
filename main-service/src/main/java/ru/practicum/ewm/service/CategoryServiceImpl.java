@@ -26,12 +26,12 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
+    private final int MAX_LENGTH = 50;
 
     @Override
-    @Transactional
     public CategoryDto postCategory(NewCategoryDto newCategoryDto) {
         checkIfCategoryParamsAreNotCorrect(newCategoryDto);
-        checkCategoryName(newCategoryDto.getName());
+        checkCategoryName(null, newCategoryDto.getName());
 
         Category category = CategoryMapper.mapToCategory(newCategoryDto);
         Category savedCategory = categoryRepository.save(category);
@@ -62,7 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryDto;
         }
 
-        checkCategoryName(categoryDto.getName());
+        checkCategoryName(catId, categoryDto.getName());
 
         Category patchedCategory = new Category(catId, categoryDto.getName());
         Category savedCategory = categoryRepository.save(patchedCategory);
@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(Integer from, Integer size) {
         List<Category> categories = new ArrayList<>();
 
@@ -85,7 +85,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public CategoryDto getCategory(Long catId) {
         Optional<Category> foundCategory = categoryRepository.findById(catId);
         if (foundCategory.isEmpty()) {
@@ -95,8 +95,9 @@ public class CategoryServiceImpl implements CategoryService {
         return CategoryMapper.mapToCategoryDto(foundCategory.get());
     }
 
-    private void checkCategoryName(String categoryName) {
-        if (categoryRepository.findCategoryByName(categoryName) != null) {
+    private void checkCategoryName(Long catId, String categoryName) {
+        Category category = categoryRepository.findCategoryByName(categoryName);
+        if (category != null && (catId == null || catId != null && catId != category.getId())) {
             throw new DuplicateCategoryNameException("Категория с таким именем уже существует");
         }
     }
@@ -106,7 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IncorrectCategoryRequestException("Попытка добавления категории без имени или с пустым именем");
         }
 
-        if (newCategoryDto.getName().length() > 50) {
+        if (newCategoryDto.getName().length() > MAX_LENGTH) {
             throw new IncorrectCategoryRequestException("Попытка добавления категории с длиной имени > 50 символов");
         }
     }
@@ -116,7 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IncorrectCategoryRequestException("Попытка добавления категории без имени или с пустым именем");
         }
 
-        if (categoryDto.getName().length() > 50) {
+        if (categoryDto.getName().length() > MAX_LENGTH) {
             throw new IncorrectCategoryRequestException("Попытка добавления категории с длиной имени > 50 символов");
         }
     }

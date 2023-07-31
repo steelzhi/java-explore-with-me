@@ -43,6 +43,12 @@ public class EventServiceImpl implements EventService {
     private final ParticipationRequestRepository participationRequestRepository;
     private final EventClient eventClient;
 
+    private final int MIN_TITLE_LENGTH = 3;
+    private final int MAX_TITLE_LENGTH = 120;
+    private final int MIN_ANNOTATION_LENGTH = 20;
+    private final int MAX_ANNOTATION_LENGTH = 2000;
+    private final int MIN_DESCRIPTION_LENGTH = 20;
+    private final int MAX_DESCRIPTION_LENGTH = 7000;
 
     @Override
     @Transactional
@@ -62,7 +68,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EventShortDto> getEventsAddedByUser(long userId, Integer from, Integer size) {
         List<Event> events = new ArrayList<>();
         PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size, Sort.by("id").descending());
@@ -76,7 +82,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public EventFullDto getEventAddedByUser(long userId, long eventId) {
         Event event = eventRepository.getEventByInitiator_IdAndId(userId, eventId);
         checkIfEventExists(event);
@@ -256,7 +262,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<EventShortDto> getPublishedEvents(
             String text,
             Long[] categories,
@@ -398,7 +404,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public EventFullDto getPublishedEvent(long id, HttpServletRequest request) {
         Event event = eventRepository.findById(id).get();
         checkIfEventIsNotPublished(event);
@@ -476,7 +482,8 @@ public class EventServiceImpl implements EventService {
             throw new IncorrectEventRequestException("Краткое описание не должно быть пустым");
         }
 
-        if (newEventDto.getAnnotation().length() < 20 || newEventDto.getAnnotation().length() > 2000) {
+        if (newEventDto.getAnnotation().length() < MIN_ANNOTATION_LENGTH
+                || newEventDto.getAnnotation().length() > MAX_ANNOTATION_LENGTH) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления краткого описания со слишком маленьким или слишком большим количество символов");
         }
@@ -485,7 +492,8 @@ public class EventServiceImpl implements EventService {
             throw new IncorrectEventRequestException("Полное описание не должно быть пустым");
         }
 
-        if (newEventDto.getDescription().length() < 20 || newEventDto.getDescription().length() > 7000) {
+        if (newEventDto.getDescription().length() < MIN_DESCRIPTION_LENGTH
+                || newEventDto.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
@@ -494,7 +502,7 @@ public class EventServiceImpl implements EventService {
             throw new IncorrectEventRequestException("Заголовок не должен быть пустым");
         }
 
-        if (newEventDto.getTitle().length() < 3 || newEventDto.getTitle().length() > 120) {
+        if (newEventDto.getTitle().length() < MIN_TITLE_LENGTH || newEventDto.getTitle().length() > MAX_TITLE_LENGTH) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
@@ -502,23 +510,23 @@ public class EventServiceImpl implements EventService {
 
     private void checkIfEventParamsAreNotCorrect(UpdateEventUserRequest updateEventUserRequest) {
         if (updateEventUserRequest.getAnnotation() != null
-                && (updateEventUserRequest.getAnnotation().length() < 20
-                || updateEventUserRequest.getAnnotation().length() > 2000)) {
+                && (updateEventUserRequest.getAnnotation().length() < MIN_ANNOTATION_LENGTH
+                || updateEventUserRequest.getAnnotation().length() > MAX_ANNOTATION_LENGTH)) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления краткого описания со слишком маленьким или слишком большим количеством " +
                             "символов");
         }
 
         if (updateEventUserRequest.getDescription() != null
-                && (updateEventUserRequest.getDescription().length() < 20
-                || updateEventUserRequest.getDescription().length() > 7000)) {
+                && (updateEventUserRequest.getDescription().length() < MIN_DESCRIPTION_LENGTH
+                || updateEventUserRequest.getDescription().length() > MAX_DESCRIPTION_LENGTH)) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
         if (updateEventUserRequest.getTitle() != null
-                && (updateEventUserRequest.getTitle().length() < 3
-                || updateEventUserRequest.getTitle().length() > 120)) {
+                && (updateEventUserRequest.getTitle().length() < MIN_TITLE_LENGTH
+                || updateEventUserRequest.getTitle().length() > MAX_TITLE_LENGTH)) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }
@@ -532,23 +540,23 @@ public class EventServiceImpl implements EventService {
 
     private void checkIfEventParamsAreNotCorrect(UpdateEventAdminRequest updateEventAdminRequest) {
         if (updateEventAdminRequest.getAnnotation() != null
-                && (updateEventAdminRequest.getAnnotation().length() < 20
-                || updateEventAdminRequest.getAnnotation().length() > 2000)) {
+                && (updateEventAdminRequest.getAnnotation().length() < MIN_ANNOTATION_LENGTH
+                || updateEventAdminRequest.getAnnotation().length() > MAX_ANNOTATION_LENGTH)) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления краткого описания со слишком маленьким или слишком большим количество " +
                             "символов");
         }
 
         if (updateEventAdminRequest.getDescription() != null
-                && (updateEventAdminRequest.getDescription().length() < 20
-                || updateEventAdminRequest.getDescription().length() > 7000)) {
+                && (updateEventAdminRequest.getDescription().length() < MIN_DESCRIPTION_LENGTH
+                || updateEventAdminRequest.getDescription().length() > MAX_DESCRIPTION_LENGTH)) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления полного описания со слишком маленьким или слишком большим количество символов");
         }
 
         if (updateEventAdminRequest.getTitle() != null
-                && (updateEventAdminRequest.getTitle().length() < 3
-                || updateEventAdminRequest.getTitle().length() > 120)) {
+                && (updateEventAdminRequest.getTitle().length() < MIN_TITLE_LENGTH
+                || updateEventAdminRequest.getTitle().length() > MAX_TITLE_LENGTH)) {
             throw new IncorrectEventRequestException(
                     "Попытка добавления заголовка со слишком маленьким или слишком большим количество символов");
         }

@@ -23,7 +23,7 @@ public class HitServiceImpl implements HitService {
     private final HitRepository hitRepository;
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<Stats> getStats(
             String start,
             String end,
@@ -86,7 +86,6 @@ public class HitServiceImpl implements HitService {
     }
 
     @Override
-    @Transactional
     public Hit saveHit(Hit hit) {
         Hit savedHit = hitRepository.save(hit);
         return savedHit;

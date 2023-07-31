@@ -6,7 +6,6 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.ewm.model.Hit;
 
@@ -26,7 +25,6 @@ public class EventClient extends BaseClient {
         );
     }
 
-    @Transactional
     public ResponseEntity<Object> getStats(String start,
                                            String end,
                                            String[] uris,
@@ -64,7 +62,6 @@ public class EventClient extends BaseClient {
         return get(path.toString(), parameters);
     }
 
-    @Transactional
     public ResponseEntity<Object> postHit(Hit hit) {
         return post("/hit", hit);
     }
