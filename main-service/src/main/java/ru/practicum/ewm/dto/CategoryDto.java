@@ -5,13 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class Stats {
-
-    private String app;
-    private String uri;
-    private long hits;
+@AllArgsConstructor
+@NoArgsConstructor
+public class CategoryDto {
+    private long id;
+    private String name;
 }
