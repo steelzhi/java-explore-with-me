@@ -1962,7 +1962,7 @@
               "const target1 = pm.response.json()[1];\r",
               "const target2 = pm.response.json()[2];\r",
               "const target3 = pm.response.json()[3];\r",
-              "const target3 = pm.response.json()[4];\r",
+              "const target4 = pm.response.json()[4];\r",
               "\r",
               "pm.test(\"Событие должно содержать поля: commentId, eventId, userId, text, created\", function () {\r",
               "pm.expect(target0).to.have.property('commentId');\r",
