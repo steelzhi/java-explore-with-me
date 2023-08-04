@@ -14,32 +14,32 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin/users")
+@RequestMapping()
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final CommentService commentService;
 
-    @PostMapping()
+    @PostMapping("/admin/users")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto postUser(@RequestBody @NotNull UserDto userDto) {
         return userService.postUser(userDto);
     }
 
-    @GetMapping()
+    @GetMapping("/admin/users")
     public List<UserDto> getUsers(@RequestParam(required = false) Long[] ids,
                                   @RequestParam(defaultValue = "0") Integer from,
                                   @RequestParam(defaultValue = "10") Integer size) {
         return userService.getUsers(ids, from, size);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
-    @PostMapping("/comments/{userId}/{eventId}")
+    @PostMapping("/users/comments/{userId}/{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public NewCommentResponse postComment(@PathVariable long userId,
                                           @PathVariable long eventId,
@@ -47,19 +47,19 @@ public class UserController {
         return commentService.postComment(userId, eventId, commentRequest);
     }
 
-    @GetMapping("/comments/{eventId}")
+    @GetMapping("/users/comments/{eventId}")
     @ResponseStatus(HttpStatus.OK)
     public List<NewCommentResponse> getAllCommentsOnEvent(@PathVariable long eventId) {
         return commentService.getAllCommentsOnEvent(eventId);
     }
 
-    @GetMapping("/comments/{eventId}/{userId}")
+    @GetMapping("/users/comments/{eventId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     public List<NewCommentResponse> getAllCommentsOnEventByUser(@PathVariable long eventId, @PathVariable long userId) {
         return commentService.getAllCommentsOnEventByUser(eventId, userId);
     }
 
-    @PatchMapping("/comments/{userId}/{commentId}")
+    @PatchMapping("/users/comments/{userId}/{commentId}")
     @ResponseStatus(HttpStatus.OK)
     public UpdateCommentResponse patchComment(@PathVariable long userId,
                                               @PathVariable long commentId,
@@ -67,10 +67,16 @@ public class UserController {
         return commentService.patchComment(userId, commentId, commentRequest);
     }
 
-    @DeleteMapping("/comments/{userId}/{commentId}")
+    @DeleteMapping("/users/comments/{userId}/{commentId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteComment(@PathVariable long userId, @PathVariable long commentId) {
-        commentService.deleteComment(userId, commentId);
+    public void deleteCommentByUser(@PathVariable long userId, @PathVariable long commentId) {
+        commentService.deleteCommentByUser(userId, commentId);
+    }
+
+    @DeleteMapping("/admin/users/comments/{commentId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCommentByAdmin(@PathVariable long commentId) {
+        commentService.deleteCommentByAdmin(commentId);
     }
 
 

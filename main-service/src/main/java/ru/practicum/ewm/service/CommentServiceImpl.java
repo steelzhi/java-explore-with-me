@@ -2,6 +2,7 @@ package ru.practicum.ewm.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.dto.*;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.exception.*;
@@ -26,10 +27,9 @@ public class CommentServiceImpl implements CommentService {
     private final int minlength = 20;
     private final int maxlength = 5_000;
 
-
     @Override
-    public NewCommentResponse postComment(long eventId, long userId, CommentRequest commentRequest) {
-        checkIfTextIsTooLong(commentRequest);
+    public NewCommentResponse postComment(long userId, long eventId, CommentRequest commentRequest) {
+        checkIfTextLengthIsNotSuitable(commentRequest);
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Событие с указанным id не найдено"));
         User user = userRepository.findById(userId)
@@ -45,8 +45,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public UpdateCommentResponse patchComment(long userId, long commentId, CommentRequest commentRequest) {
-        checkIfTextIsTooLong(commentRequest);
+        checkIfTextLengthIsNotSuitable(commentRequest);
         checkIfUserDoesNotExist(userId);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Комментарий с указанным id не найден"));
@@ -63,7 +64,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void deleteComment(long userId, long commentId) {
+    @Transactional
+    public void deleteCommentByUser(long userId, long commentId) {
         checkIfUserDoesNotExist(userId);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentNotFoundException("Комментарий с указанным id не найден"));
@@ -73,6 +75,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NewCommentResponse> getAllCommentsOnEvent(long eventId) {
         List<Comment> comments = commentRepository.findAllByEvent_Id(eventId);
         List<NewCommentResponse> newCommentResponses = CommentMapper.mapToNewCommentResponse(comments);
@@ -81,6 +84,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<NewCommentResponse> getAllCommentsOnEventByUser(long eventId, long userId) {
         List<Comment> comments = commentRepository.findAllByEvent_IdAndUser_Id(eventId, userId);
         List<NewCommentResponse> newCommentResponses = CommentMapper.mapToNewCommentResponse(comments);
@@ -88,12 +92,21 @@ public class CommentServiceImpl implements CommentService {
         return newCommentResponses;
     }
 
-    private void checkIfTextIsTooLong(CommentRequest commentRequest) {
+    @Override
+    @Transactional
+    public void deleteCommentByAdmin(long commentId) {
+        commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentNotFoundException("Комментарий с указанным id не найден"));
+
+        commentRepository.deleteById(commentId);
+    }
+
+    private void checkIfTextLengthIsNotSuitable(CommentRequest commentRequest) {
         if (commentRequest.getText() == null
         || commentRequest.getText().isBlank()
         || commentRequest.getText().length() < minlength
         || commentRequest.getText().length() > maxlength) {
-            throw new IncorrectTextLengthException("Длина текста < 10 либо > 5000 символов");
+            throw new IncorrectTextLengthException("Длина текста < 20 либо > 5000 символов");
         }
     }
 

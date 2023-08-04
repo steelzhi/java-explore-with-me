@@ -226,14 +226,14 @@ public class ErrorHandler {
     public ApiError handleIncorrectTextLength(final IncorrectTextLengthException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
-                "Длина текста < 10 либо > 5000 символов",
+                "Длина текста < 20 либо > 5000 символов",
                 HttpStatus.CONFLICT,
                 LocalDateTime.now());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError handleCommentNotFound(final CommentNotFoundException e, long userId) {
+    public ApiError handleCommentNotFound(final CommentNotFoundException e) {
         return new ApiError(e.getStackTrace(),
                 e.getMessage(),
                 "Комментарий с указанным id не найден",
