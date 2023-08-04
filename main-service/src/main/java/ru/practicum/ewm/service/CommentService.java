@@ -1,7 +1,8 @@
 package ru.practicum.ewm.service;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.dto.CommentRequest;
+import ru.practicum.ewm.dto.NewCommentResponse;
+import ru.practicum.ewm.dto.UpdateCommentResponse;
 
 import java.util.List;
 

@@ -3,7 +3,9 @@ package ru.practicum.ewm.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.dto.*;
+import ru.practicum.ewm.dto.CommentRequest;
+import ru.practicum.ewm.dto.NewCommentResponse;
+import ru.practicum.ewm.dto.UpdateCommentResponse;
 import ru.practicum.ewm.enums.EventState;
 import ru.practicum.ewm.exception.*;
 import ru.practicum.ewm.mapper.CommentMapper;
@@ -103,9 +105,9 @@ public class CommentServiceImpl implements CommentService {
 
     private void checkIfTextLengthIsNotSuitable(CommentRequest commentRequest) {
         if (commentRequest.getText() == null
-        || commentRequest.getText().isBlank()
-        || commentRequest.getText().length() < minlength
-        || commentRequest.getText().length() > maxlength) {
+                || commentRequest.getText().isBlank()
+                || commentRequest.getText().length() < minlength
+                || commentRequest.getText().length() > maxlength) {
             throw new IncorrectTextLengthException("Длина текста < 20 либо > 5000 символов");
         }
     }
