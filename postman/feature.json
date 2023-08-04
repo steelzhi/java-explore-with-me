@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "13e4d6bf-7f88-4257-958f-703c9e9a163d",
+    "_postman_id": "78119279-d8d8-4c9f-ae00-4c0501eba22d",
     "name": "feature",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "26121545"
@@ -301,6 +301,105 @@
       "response": []
     },
     {
+      "name": "set status PENDING to event 103",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 200\", function () {\r",
+              "    pm.response.to.have.status(200);  \r",
+              "    pm.response.to.be.withBody;\r",
+              "    pm.response.to.be.json;\r",
+              "});\r",
+              "\r",
+              "const source = JSON.parse(pm.request.body.raw);\r",
+              "const target = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Событие должно содержать поля: annotation, category, description, eventDate, location, paid, participantLimit, requestModeration, state, title\", function () {\r",
+              "pm.expect(target).to.have.property('annotation');\r",
+              "pm.expect(target).to.have.property('category');\r",
+              "pm.expect(target).to.have.property('description');\r",
+              "pm.expect(target).to.have.property('eventDate');\r",
+              "pm.expect(target).to.have.property('location');\r",
+              "pm.expect(target).to.have.property('paid');\r",
+              "pm.expect(target).to.have.property('participantLimit');\r",
+              "pm.expect(target).to.have.property('requestModeration');\r",
+              "pm.expect(target).to.have.property('state');\r",
+              "pm.expect(target).to.have.property('title');\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+              "    pm.expect(target.annotation).equal(source.annotation, 'Аннотация события должна соответствовать аннотации события в запросе');\r",
+              "    pm.expect(target.category).to.not.be.null;\r",
+              "    pm.expect(target.description).equal(source.description, 'Описание события должно соответствовать описание события в запросе');\r",
+              "    pm.expect(target.eventDate).equal(source.eventDate, 'Дата проведения события должна соответствовать дате проведения события в запросе');\r",
+              "    pm.expect(target.location.lat.toString()).equal(source.location.lat.toString(), 'Широта локации проведения события должна соответствовать широте локации проведения события в запросе');\r",
+              "    pm.expect(target.location.lon.toString()).equal(source.location.lon.toString(), 'Долгота локации проведения события должна соответствовать долготе локации проведения события в запросе');\r",
+              "    pm.expect(target.paid.toString()).equal(source.paid.toString(), 'Стоимость события должна соответствовать стоимости события в запросе');\r",
+              "    pm.expect(target.participantLimit.toString()).equal(source.participantLimit.toString(), 'Лимит участников события должно соответствовать лимиту участников события в запросе');\r",
+              "    pm.expect(target.requestModeration.toString()).equal(source.requestModeration.toString(), 'Необходимость модерации события должна соответствовать необходимости модерации события в запросе');\r",
+              "    pm.expect(target.state).to.not.be.null;\r",
+              "    pm.expect(target.title).equal(source.title, 'Название события должно соответствовать названию события в запросе');\r",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"annotation\" : \"Для всех, кто любит Волгу\",\r\n    \"category\" : 1,\r\n    \"description\" : \"Собираем всех, кто вернулся из отпусков! Рейв, коктейли и много пены - скучно не будет!\",\r\n    \"eventDate\" : \"2023-09-15 10:00:00\",\r\n    \"location\" : \r\n    {\r\n        \"lat\": 62.3429,\r\n        \"lon\": 104.8725\r\n    },\r\n    \"paid\" : false,\r\n    \"participantLimit\" : 2000,\r\n    \"requestModeration\" : false,\r\n    \"title\" : \"ЗаVolgation\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/admin/events/:eventId",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "events",
+            ":eventId"
+          ],
+          "variable": [
+            {
+              "key": "eventId",
+              "value": "103"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "too long comment",
       "event": [
         {
@@ -579,105 +678,6 @@
               "key": "userId",
               "value": "133"
             },
-            {
-              "key": "eventId",
-              "value": "103"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "set status PENDING to event 103",
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "exec": [
-              ""
-            ],
-            "type": "text/javascript"
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Ответ должен содержать код статуса 200\", function () {\r",
-              "    pm.response.to.have.status(200);  \r",
-              "    pm.response.to.be.withBody;\r",
-              "    pm.response.to.be.json;\r",
-              "});\r",
-              "\r",
-              "const source = JSON.parse(pm.request.body.raw);\r",
-              "const target = pm.response.json();\r",
-              "\r",
-              "pm.test(\"Событие должно содержать поля: annotation, category, description, eventDate, location, paid, participantLimit, requestModeration, state, title\", function () {\r",
-              "pm.expect(target).to.have.property('annotation');\r",
-              "pm.expect(target).to.have.property('category');\r",
-              "pm.expect(target).to.have.property('description');\r",
-              "pm.expect(target).to.have.property('eventDate');\r",
-              "pm.expect(target).to.have.property('location');\r",
-              "pm.expect(target).to.have.property('paid');\r",
-              "pm.expect(target).to.have.property('participantLimit');\r",
-              "pm.expect(target).to.have.property('requestModeration');\r",
-              "pm.expect(target).to.have.property('state');\r",
-              "pm.expect(target).to.have.property('title');\r",
-              "});\r",
-              "\r",
-              "pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
-              "    pm.expect(target.annotation).equal(source.annotation, 'Аннотация события должна соответствовать аннотации события в запросе');\r",
-              "    pm.expect(target.category).to.not.be.null;\r",
-              "    pm.expect(target.description).equal(source.description, 'Описание события должно соответствовать описание события в запросе');\r",
-              "    pm.expect(target.eventDate).equal(source.eventDate, 'Дата проведения события должна соответствовать дате проведения события в запросе');\r",
-              "    pm.expect(target.location.lat.toString()).equal(source.location.lat.toString(), 'Широта локации проведения события должна соответствовать широте локации проведения события в запросе');\r",
-              "    pm.expect(target.location.lon.toString()).equal(source.location.lon.toString(), 'Долгота локации проведения события должна соответствовать долготе локации проведения события в запросе');\r",
-              "    pm.expect(target.paid.toString()).equal(source.paid.toString(), 'Стоимость события должна соответствовать стоимости события в запросе');\r",
-              "    pm.expect(target.participantLimit.toString()).equal(source.participantLimit.toString(), 'Лимит участников события должно соответствовать лимиту участников события в запросе');\r",
-              "    pm.expect(target.requestModeration.toString()).equal(source.requestModeration.toString(), 'Необходимость модерации события должна соответствовать необходимости модерации события в запросе');\r",
-              "    pm.expect(target.state).to.not.be.null;\r",
-              "    pm.expect(target.title).equal(source.title, 'Название события должно соответствовать названию события в запросе');\r",
-              "});"
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"annotation\" : \"Для всех, кто любит Волгу\",\r\n    \"category\" : 1,\r\n    \"description\" : \"Собираем всех, кто вернулся из отпусков! Рейв, коктейли и много пены - скучно не будет!\",\r\n    \"eventDate\" : \"2023-09-15 10:00:00\",\r\n    \"location\" : \r\n    {\r\n        \"lat\": 62.3429,\r\n        \"lon\": 104.8725\r\n    },\r\n    \"paid\" : false,\r\n    \"participantLimit\" : 2000,\r\n    \"requestModeration\" : false,\r\n    \"title\" : \"ЗаVolgation\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:8080/admin/events/:eventId",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8080",
-          "path": [
-            "admin",
-            "events",
-            ":eventId"
-          ],
-          "variable": [
             {
               "key": "eventId",
               "value": "103"
@@ -1955,6 +1955,75 @@
       "response": []
     },
     {
+      "name": "not existing comment by admin",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Ответ должен содержать код статуса 404\", function () {\r",
+              "    pm.response.to.have.status(404);  \r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/admin/users/comments/:commentId",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "admin",
+            "users",
+            "comments",
+            ":commentId"
+          ],
+          "variable": [
+            {
+              "key": "commentId",
+              "value": "1000"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "comment (№ 3) from user 135 to event 103",
       "event": [
         {
@@ -2136,75 +2205,6 @@
             {
               "key": "userId",
               "value": "135"
-            }
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "not existing comment by admin",
-      "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "exec": [
-              ""
-            ],
-            "type": "text/javascript"
-          }
-        },
-        {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "pm.test(\"Ответ должен содержать код статуса 404\", function () {\r",
-              "    pm.response.to.have.status(404);  \r",
-              "});\r",
-              ""
-            ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "DELETE",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:8080/admin/users/comments/:commentId",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "8080",
-          "path": [
-            "admin",
-            "users",
-            "comments",
-            ":commentId"
-          ],
-          "variable": [
-            {
-              "key": "commentId",
-              "value": "1000"
             }
           ]
         }
