@@ -7,7 +7,7 @@
   },
   "item": [
     {
-      "name": "user 1",
+      "name": "user 133",
       "event": [
         {
           "listen": "test",
@@ -66,7 +66,7 @@
       "response": []
     },
     {
-      "name": "user 2",
+      "name": "user 134",
       "event": [
         {
           "listen": "test",
@@ -125,7 +125,7 @@
       "response": []
     },
     {
-      "name": "category 1",
+      "name": "category 118",
       "event": [
         {
           "listen": "prerequest",
@@ -195,13 +195,12 @@
             "admin",
             "categories"
           ]
-        },
-        "description": "Обратите внимание: имя категории должно быть уникальным"
+        }
       },
       "response": []
     },
     {
-      "name": "event 1",
+      "name": "event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -294,11 +293,10 @@
           "variable": [
             {
               "key": "userId",
-              "value": "1"
+              "value": "133"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
@@ -363,20 +361,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "2"
+              "value": "134"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment from user 1 to not existing event",
+      "name": "comment from user 133 to not existing event",
       "event": [
         {
           "listen": "prerequest",
@@ -436,20 +433,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "1"
+              "value": "133"
             },
             {
               "key": "eventId",
-              "value": "100"
+              "value": "1000"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment from not existing  user to event 1",
+      "name": "comment from not existing  user to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -509,20 +505,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "100"
+              "value": "1000"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment from initiator (user 1) to his event (event 1)",
+      "name": "comment from initiator (user 133) to his event (event 103)",
       "event": [
         {
           "listen": "prerequest",
@@ -582,20 +577,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "1"
+              "value": "133"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "set status PENDING to event 1",
+      "name": "set status PENDING to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -686,16 +680,15 @@
           "variable": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment from user 2 to not yet published event (event 1)",
+      "name": "comment from user 134 to not yet published event (event 103)",
       "event": [
         {
           "listen": "prerequest",
@@ -755,20 +748,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "2"
+              "value": "134"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "set status PUBLISHED to event 1",
+      "name": "set status PUBLISHED to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -859,16 +851,15 @@
           "variable": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment from user 2 to event 1",
+      "name": "comment from user 134 to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -945,15 +936,14 @@
           "variable": [
             {
               "key": "userId",
-              "value": "2"
+              "value": "134"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
@@ -1018,20 +1008,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "2"
+              "value": "134"
             },
             {
               "key": "commentId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "not existing сomment from user 2",
+      "name": "not existing сomment from user 134",
       "event": [
         {
           "listen": "prerequest",
@@ -1091,20 +1080,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "2"
+              "value": "134"
             },
             {
               "key": "commentId",
-              "value": "100"
+              "value": "1000"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "user 3",
+      "name": "user 135",
       "event": [
         {
           "listen": "test",
@@ -1163,7 +1151,7 @@
       "response": []
     },
     {
-      "name": "comment 1 from user without rights to update (user 3)",
+      "name": "comment 1 from user without rights to update (user 135)",
       "event": [
         {
           "listen": "prerequest",
@@ -1223,20 +1211,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             },
             {
               "key": "commentId",
               "value": "1"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment 1 from user 2",
+      "name": "comment 1 from user 134",
       "event": [
         {
           "listen": "prerequest",
@@ -1313,20 +1300,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "2"
+              "value": "134"
             },
             {
               "key": "commentId",
               "value": "1"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment (№ 1) from user 3 to event 1",
+      "name": "comment (№ 1) from user 135 to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -1403,20 +1389,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment (№ 2) from user 3 to event 1",
+      "name": "comment (№ 2) from user 135 to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -1493,20 +1478,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "not existing comment by user 3 to event 1",
+      "name": "not existing comment 1000 by user 135 to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -1567,20 +1551,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             },
             {
               "key": "commentId",
-              "value": "100"
+              "value": "1000"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment 3 by user without rights to delete (user 1)",
+      "name": "comment 3 by user without rights to delete (user 133)",
       "event": [
         {
           "listen": "prerequest",
@@ -1640,20 +1623,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "1"
+              "value": "133"
             },
             {
               "key": "commentId",
               "value": "3"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment 3 by user 3",
+      "name": "comment 3 by user 135",
       "event": [
         {
           "listen": "prerequest",
@@ -1713,20 +1695,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             },
             {
               "key": "commentId",
               "value": "3"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "user 4",
+      "name": "user 136",
       "event": [
         {
           "listen": "test",
@@ -1785,7 +1766,7 @@
       "response": []
     },
     {
-      "name": "comment from user 4 to event 1",
+      "name": "comment from user 136 to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -1862,20 +1843,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "4"
+              "value": "136"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "all comments for event 1",
+      "name": "all comments for event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -1967,16 +1947,15 @@
           "variable": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "comment (№ 3) from user 3 to event 1",
+      "name": "comment (№ 3) from user 135 to event 103",
       "event": [
         {
           "listen": "prerequest",
@@ -2053,20 +2032,19 @@
           "variable": [
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             },
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
     {
-      "name": "all comments for event 1 by user 3",
+      "name": "all comments for event 103 by user 135",
       "event": [
         {
           "listen": "prerequest",
@@ -2153,15 +2131,14 @@
           "variable": [
             {
               "key": "eventId",
-              "value": "1"
+              "value": "103"
             },
             {
               "key": "userId",
-              "value": "3"
+              "value": "135"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
@@ -2227,11 +2204,10 @@
           "variable": [
             {
               "key": "commentId",
-              "value": "100"
+              "value": "1000"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     },
@@ -2299,8 +2275,7 @@
               "value": "4"
             }
           ]
-        },
-        "description": "Обратите внимание: дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента"
+        }
       },
       "response": []
     }
