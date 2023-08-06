@@ -220,4 +220,54 @@ public class ErrorHandler {
                 HttpStatus.NOT_FOUND,
                 LocalDateTime.now());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleIncorrectTextLength(final IncorrectTextLengthException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Длина текста < 20 либо > 5000 символов",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleCommentNotFound(final CommentNotFoundException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Комментарий с указанным id не найден",
+                HttpStatus.NOT_FOUND,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleNoRightsToUpdate(final NoRightsToUpdateException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Комментарий оставлен не данным пользователем - он не имеет прав на редактирование",
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleNoRightsToPost(final NoRightsToPostException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Пользователь не может оставлять комментарии к организуемому им же событию",
+                HttpStatus.BAD_REQUEST,
+                LocalDateTime.now());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleNotPermittedStateToPostAndUpdate(final NotPermittedStateToPostAndUpdateException e) {
+        return new ApiError(e.getStackTrace(),
+                e.getMessage(),
+                "Добавлять и редактировать комментарии можно только к опубликованным событиям",
+                HttpStatus.CONFLICT,
+                LocalDateTime.now());
+    }
 }
