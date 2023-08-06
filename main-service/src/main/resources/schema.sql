@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS participation_requests CASCADE;
 DROP TABLE IF EXISTS compilations CASCADE;
 DROP TABLE IF EXISTS compilation_events CASCADE;
 DROP TABLE IF EXISTS comments CASCADE;
+DROP INDEX IF EXISTS event_index;
 
 
 CREATE TABLE IF NOT EXISTS users (
@@ -79,3 +80,5 @@ CREATE TABLE IF NOT EXISTS comments (
     CONSTRAINT event_comment FOREIGN KEY (event_id) REFERENCES main_events(id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT user_comment FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX IF NOT EXISTS event_index ON comments(event_id);

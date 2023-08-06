@@ -26,8 +26,8 @@ public class CommentServiceImpl implements CommentService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
-    private final int minlength = 20;
-    private final int maxlength = 5_000;
+    private static final int MIN_LENGTH = 20;
+    private static final int MAX_LENGTH = 5_000;
 
     @Override
     public NewCommentResponse postComment(long userId, long eventId, CommentRequest commentRequest) {
@@ -106,8 +106,8 @@ public class CommentServiceImpl implements CommentService {
     private void checkIfTextLengthIsNotSuitable(CommentRequest commentRequest) {
         if (commentRequest.getText() == null
                 || commentRequest.getText().isBlank()
-                || commentRequest.getText().length() < minlength
-                || commentRequest.getText().length() > maxlength) {
+                || commentRequest.getText().length() < MIN_LENGTH
+                || commentRequest.getText().length() > MAX_LENGTH) {
             throw new IncorrectTextLengthException("Длина текста < 20 либо > 5000 символов");
         }
     }
