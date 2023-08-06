@@ -26,7 +26,7 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
-    private final int maxlength = 50;
+    private static final int MAX_LENGTH = 50;
 
     @Override
     public CategoryDto postCategory(NewCategoryDto newCategoryDto) {
@@ -107,7 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IncorrectCategoryRequestException("Попытка добавления категории без имени или с пустым именем");
         }
 
-        if (newCategoryDto.getName().length() > maxlength) {
+        if (newCategoryDto.getName().length() > MAX_LENGTH) {
             throw new IncorrectCategoryRequestException("Попытка добавления категории с длиной имени > 50 символов");
         }
     }
@@ -117,7 +117,7 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IncorrectCategoryRequestException("Попытка добавления категории без имени или с пустым именем");
         }
 
-        if (categoryDto.getName().length() > maxlength) {
+        if (categoryDto.getName().length() > MAX_LENGTH) {
             throw new IncorrectCategoryRequestException("Попытка добавления категории с длиной имени > 50 символов");
         }
     }
